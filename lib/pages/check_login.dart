@@ -40,8 +40,16 @@ class _CheckLoginState extends State<CheckLogin> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.notification_important,size: 120, color: Colors.red[900],),
-            MyStyle().showProgress(),
+            Icon(
+              Icons.notification_important,
+              size: 120,
+              color: Colors.red[900],
+            ),
+            Text(
+              'PSinsx',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            )
+            //MyStyle().showProgress(),
           ],
         ),
       ),
