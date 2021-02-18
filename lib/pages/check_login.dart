@@ -36,21 +36,20 @@ class _CheckLoginState extends State<CheckLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.notification_important,
-              size: 120,
-              color: Colors.red[900],
-            ),
-            Text(
-              'PSinsx',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            )
-            //MyStyle().showProgress(),
-          ],
+      body: Center(
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.notification_important,
+                size: 120,
+                color: Colors.red[900],
+              ),
+             
+              MyStyle().showProgress(),
+            ],
+          ),
         ),
       ),
     );
