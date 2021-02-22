@@ -17,7 +17,6 @@ class _MapInsxState extends State<MapInsx> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     insxModel2s = widget.insxModel2s;
   }
@@ -31,7 +30,11 @@ class _MapInsxState extends State<MapInsx> {
             calculageHues(item.noti_date)),
         markerId: MarkerId('id${item.id}'),
         position: LatLng(double.parse(item.lat), double.parse(item.lng)),
-        infoWindow: InfoWindow(title: item.cus_name, snippet: item.pea_no),
+        infoWindow: InfoWindow(
+          title: item.cus_name,
+          snippet: item.pea_no,
+          onTap: () => confirmDialog(item),
+        ),
       );
       markers.add(marker);
     }
@@ -39,7 +42,7 @@ class _MapInsxState extends State<MapInsx> {
   }
 
   double calculageHues(String notidate) {
-    List<double> hues = [80.0, 60.0, 150.0, 20.0];
+    List<double> hues = [80.0, 60.0, 200.0, 20.0];
     List<String> strings = notidate.split(" ");
     List<String> dateTimeInts = strings[0].split('-');
     DateTime notiDateTime = DateTime(
@@ -65,7 +68,16 @@ class _MapInsxState extends State<MapInsx> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Center(
+          child: Text(
+            insxModel2s.length == 0
+                ? 'ข้อมูล : ? รายการ'
+                : 'ข้อมูล : ${insxModel2s.length} รายการ',
+            style: TextStyle(fontSize: 14),
+          ),
+        ),
+      ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: startMapLatLng,
@@ -76,6 +88,53 @@ class _MapInsxState extends State<MapInsx> {
         markers: myAllMarker(),
         myLocationButtonEnabled: true,
         myLocationEnabled: true,
+      ),
+    );
+  }
+
+  Future<Null> confirmDialog(InsxModel2 insxModel2) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: ListTile(
+          leading: Icon(
+            Icons.pin_drop,
+            size: 36,
+          ),
+          title: Text(
+            insxModel2.cus_name,
+            style: TextStyle(fontSize: 14),
+          ),
+          subtitle: Text(insxModel2.pea_no, style: TextStyle(fontSize: 14)),
+        ),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'เกิน 300 เมตร ให้ถ่ายภาพมิเตอร์',
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+          SizedBox(height: 40,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                  icon: Icon(Icons.camera_alt),
+                  onPressed: () {
+                    //chooseCamera(index);
+                    Navigator.pop(context);
+                  }),
+              IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ],
+          ),
+        ],
       ),
     );
   }

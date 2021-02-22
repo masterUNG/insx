@@ -36,6 +36,7 @@ dependencies:
   location: ^3.2.4
   url_launcher: ^5.7.10
   image_picker: ^0.6.7+22
+  circular_profile_avatar: ^1.0.6
 
 flutter_icons:
   android: true
@@ -72,10 +73,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Prompt
+      fonts:
+        - asset: assets/Prompt-Light.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

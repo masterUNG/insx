@@ -88,6 +88,7 @@ class _SignInState extends State<SignIn> {
     preferences.setString('id', userModel.userId);
     preferences.setString('staffname', userModel.staffname);
     preferences.setString('user_email', userModel.userEmail);
+    preferences.setString('user_img', userModel.userImg);
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => myWidget,
     );

@@ -8,8 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:psinsx/models/insx_model.dart';
 import 'package:psinsx/models/insx_model2.dart';
+import 'package:psinsx/pages/insx_edit.dart';
 import 'package:psinsx/pages/map_insx.dart';
+import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/my_style.dart';
+import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InsxPage extends StatefulWidget {
@@ -26,6 +29,7 @@ class _InsxPageState extends State<InsxPage> {
   List<InsxModel2> insxModel2s = [];
   List<Color> colorIcons = List();
   List<File> files = List();
+  String urlImage;
 
   @override
   void initState() {
@@ -65,34 +69,32 @@ class _InsxPageState extends State<InsxPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView(
-      children: <Widget>[
-        Card(
-          child: ListTile(
-              title: Text(insxModel2s.length == 0
-                  ? 'จำนวน : ? รายการ'
-                  : 'จำนวน : ${insxModel2s.length} รายการ'),
-              trailing: IconButton(
-                  icon: Icon(Icons.map),
-                  onPressed: () {
-                    MaterialPageRoute materialPageRoute = MaterialPageRoute(
-                      builder: (context) => MapInsx(
-                        insxModel2s: insxModel2s,
-                      ),
-                    );
-                    Navigator.push(context, materialPageRoute);
-                  })),
-        ),
-        loadStatus ? MyStyle().showProgress() : showContent(),
-      ],
-    ));
+      body:
+          loadStatus ? Center(child: MyStyle().showProgress()) : showContent(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          MaterialPageRoute materialPageRoute = MaterialPageRoute(
+            builder: (context) => MapInsx(
+              insxModel2s: insxModel2s,
+            ),
+          );
+          Navigator.push(context, materialPageRoute);
+        },
+        child: Icon(Icons.map_sharp),
+      ),
+    );
   }
 
   Widget showContent() {
     return status
         ? showListInsx()
-        : Center(
-            child: Text('No Data'),
+        : Container(
+            child: Center(
+              child: Text(
+                'No Data',
+                style: TextTheme().bodyText1,
+              ),
+            ),
           );
   }
 
@@ -162,49 +164,57 @@ class _InsxPageState extends State<InsxPage> {
     );
   }
 
-  Widget showListInsx() => ListView.builder(
-        itemCount: insxModel2s.length,
-        shrinkWrap: true,
-        physics: ScrollPhysics(),
-        itemBuilder: (context, index) => GestureDetector(
-          onTap: () =>
-              confirmDialog(insxModel2s[index], colorIcons[index], index),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
+  Widget showListInsx() => SingleChildScrollView(
+        child: Column(
+          children: [
+            Card(
+              child: ListTile(
+                title: Text(insxModel2s.length == 0
+                    ? 'ข้อมูล : ? รายการ'
+                    : 'ข้อมูล : ${insxModel2s.length} รายการ'),
+              ),
+            ),
+            ListView.builder(
+              itemCount: insxModel2s.length,
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () {
+                  MaterialPageRoute route = MaterialPageRoute(
+                    builder: (context) => InsxEdit(
+                      insxModel2: insxModel2s[index],
+                    ),
+                  );
+                  Navigator.push(context, route);
+                },
+
+                //=> confirmDialog(insxModel2s[index], colorIcons[index], index),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.pin_drop,
                         size: 36,
                         color: colorIcons[index],
                       ),
-                      title: Text(insxModel2s[index].cus_name),
+                      title: Text(
+                        insxModel2s[index].cus_name,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       subtitle: Text(
-                        '${insxModel2s[index].write_id} \n${insxModel2s[index].pea_no}',
-                        style: TextStyle(fontSize: 14),
+                        '${insxModel2s[index].write_id} \n${insxModel2s[index].pea_no} ',
+                        style: TextStyle(fontSize: 12),
                       ),
                     ),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: files[index] == null
-                        ? Text('No Image')
-                        : Container(
-                            height: 90,
-                            child: Image(
-                              fit: BoxFit.cover,
-                              image: FileImage(files[index]),
-                            ),
-                          ),
-                  )
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       );
 
@@ -212,8 +222,8 @@ class _InsxPageState extends State<InsxPage> {
     try {
       var object = await ImagePicker().getImage(
         source: ImageSource.camera,
-        maxWidth: 800,
-        maxHeight: 800,
+        maxWidth: 800.0,
+        maxHeight: 800.0,
       );
       setState(() {
         files[index] = File(object.path);
@@ -223,20 +233,40 @@ class _InsxPageState extends State<InsxPage> {
   }
 
   Future<Null> uploadImage(File file, int index) async {
-    String apiSaveFile = 'https://pea23.com/apipsinsx/saveFile.php';
-    
-    TimeOfDay timeOfDay = TimeOfDay.now();
-    String fileName = 'image${Random().nextInt(1000000)}${insxModel2s[index].ca}.jpg';
+    String apiSaveFile = '${MyConstant().domain}/apipsinsx/saveFile.php';
+
+    //TimeOfDay timeOfDay = TimeOfDay.now();
+    String fileName =
+        'insx${Random().nextInt(1000000)}${insxModel2s[index].ca}.jpg';
 
     try {
       Map<String, dynamic> map = Map();
       map['file'] = await MultipartFile.fromFile(file.path, filename: fileName);
       FormData data = FormData.fromMap(map);
       await Dio().post(apiSaveFile, data: data).then((value) {
-        print('====>>> $value');
-        print(
-          '===== Success url Image ==>> https://pea23.com/apipsinsx/upload/$fileName');
+        //print('====>>> $value');
+        //print('Success url Image ==>> https://pea23.com/apipsinsx/upload/$fileName');
+        urlImage = '${MyConstant().domain}/apipsinsx/upload/$fileName';
+        print('=== usrlImage == $urlImage');
+
+        editDataInsx(insxModel2s[index]);
       });
     } catch (e) {}
+  }
+
+  Future<Null> editDataInsx(InsxModel2 insxModel2) async {
+    print('id insx == ${insxModel2.id}');
+
+    String url =
+        '${MyConstant().domain}/apipsinsx/editDataWhereId.php?isAdd=true&id=${insxModel2.id}&invoice_status=ดำเนินการเสร็จสมบูรณ์&work_image=$urlImage';
+
+    await Dio().get(url).then((value) {
+      if (value.toString() == 'true') {
+        readInsx();
+        print('readInsx==>>> $value');
+      } else {
+        normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
+      }
+    });
   }
 }

@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:psinsx/pages/signin_page.dart';
-import 'package:psinsx/utility/my_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home_page.dart';
@@ -41,13 +42,7 @@ class _CheckLoginState extends State<CheckLogin> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.notification_important,
-                size: 120,
-                color: Colors.red[900],
-              ),
-             
-              MyStyle().showProgress(),
+              //MyStyle().showLogo(),
             ],
           ),
         ),

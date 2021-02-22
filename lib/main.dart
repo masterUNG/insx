@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'PS23',
       theme: ThemeData(
+        fontFamily: 'Prompt',
           brightness: Brightness.light,
           //primarySwatch: Colors.red,
           primaryColor: Colors.red[900],

@@ -66,7 +66,7 @@ class _DmsxPageState extends State<DmsxPage> {
           children: <Widget>[
             Card(
               child: ListTile(
-                title: Text('จำนวน : 23 รายการ'),
+                title: Text('จำนวน : ? รายการ'),
                 trailing: Icon(Icons.map),
                 onTap: null,
               ),

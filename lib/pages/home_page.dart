@@ -1,6 +1,8 @@
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:psinsx/pages/dashbord.dart';
 import 'package:psinsx/pages/dmsx_page.dart';
+import 'package:psinsx/pages/help_page.dart';
 import 'package:psinsx/pages/information_user.dart';
 import 'package:psinsx/pages/insx_page.dart';
 import 'package:psinsx/pages/signin_page.dart';
@@ -14,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String nameUser, userEmail;
+  String nameUser, userEmail, userImge;
 
   @override
   void initState() {
@@ -27,7 +29,10 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       nameUser = preferences.getString('staffname');
       userEmail = preferences.getString('user_email');
+      userImge = preferences.getString('user_img');
     });
+    print('nameUser ==== $nameUser');
+    print('userImage === $userImge');
   }
 
   Future<Null> signOutProcess() async {
@@ -38,11 +43,10 @@ class _HomePageState extends State<HomePage> {
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
 
-   Widget currentWidget = Dashbord();
+  Widget currentWidget = Dashbord();
 
   @override
   Widget build(BuildContext context) {
-   
     Future<Null> signOutProcess() async {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.clear();
@@ -60,10 +64,9 @@ class _HomePageState extends State<HomePage> {
             fit: BoxFit.cover,
           ),
         ),
-        currentAccountPicture: Icon(
-          Icons.person_pin,
-          size: 80,
-          color: Colors.red,
+        currentAccountPicture: CircularProfileAvatar(
+          '$userImge',
+          borderWidth: 4.0,
         ),
         accountName: Text('$nameUser'),
         accountEmail: Text('$userEmail'),
@@ -104,20 +107,20 @@ class _HomePageState extends State<HomePage> {
                   });
                   Navigator.pop(context);
                 }),
-            ListTile(
-                leading: Icon(Icons.image_search),
-                title: Text('DMSx'),
-                subtitle: Text(
-                  'งานงดจ่ายไฟ',
-                  style: TextStyle(fontSize: 8),
-                ),
-                trailing: Icon(Icons.arrow_right),
-                onTap: () {
-                  setState(() {
-                    currentWidget = DmsxPage();
-                  });
-                  Navigator.pop(context);
-                }),
+            // ListTile(
+            //     leading: Icon(Icons.image_search),
+            //     title: Text('DMSx'),
+            //     subtitle: Text(
+            //       'งานงดจ่ายไฟ',
+            //       style: TextStyle(fontSize: 8),
+            //     ),
+            //     trailing: Icon(Icons.arrow_right),
+            //     onTap: () {
+            //       setState(() {
+            //         currentWidget = DmsxPage();
+            //       });
+            //       Navigator.pop(context);
+            //     }),
             ListTile(
                 leading: Icon(Icons.person_pin),
                 title: Text('Information'),
@@ -129,6 +132,20 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   setState(() {
                     currentWidget = InformationUser();
+                  });
+                  Navigator.pop(context);
+                }),
+                   ListTile(
+                leading: Icon(Icons.help),
+                title: Text('Help'),
+                subtitle: Text(
+                  'ช่วยเหลือ',
+                  style: TextStyle(fontSize: 8),
+                ),
+                trailing: Icon(Icons.arrow_right),
+                onTap: () {
+                  setState(() {
+                    currentWidget = HelpPage();
                   });
                   Navigator.pop(context);
                 }),
@@ -145,7 +162,18 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        title: Text(nameUser == null ? 'User' : '$nameUser login', style: TextStyle(fontSize: 16),),
+        title: Text(
+          nameUser == null ? 'User' : '$nameUser login',
+          style: TextStyle(fontSize: 14),
+        ),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.notifications,
+                color: Colors.red[100],
+              ),
+              onPressed: () {})
+        ],
       ),
       body: currentWidget,
     );
