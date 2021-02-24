@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:psinsx/models/insx_model2.dart';
+import 'package:psinsx/pages/insx_edit.dart';
 
 class MapInsx extends StatefulWidget {
   final List<InsxModel2> insxModel2s;
@@ -33,7 +34,12 @@ class _MapInsxState extends State<MapInsx> {
         infoWindow: InfoWindow(
           title: item.cus_name,
           snippet: item.pea_no,
-          onTap: () => confirmDialog(item),
+          onTap: () {
+            MaterialPageRoute route = MaterialPageRoute(
+              builder: (context) => InsxEdit(insxModel2: item,),
+            );
+            Navigator.push(context, route);
+          },
         ),
       );
       markers.add(marker);
@@ -117,7 +123,9 @@ class _MapInsxState extends State<MapInsx> {
               ),
             ],
           ),
-          SizedBox(height: 40,),
+          SizedBox(
+            height: 40,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

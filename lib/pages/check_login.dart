@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:psinsx/pages/signin_page.dart';
+import 'package:psinsx/pages/version_check.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home_page.dart';
@@ -16,6 +17,7 @@ class _CheckLoginState extends State<CheckLogin> {
   void initState() {
     super.initState();
     checkPreferance();
+    VersionCheck();
   }
 
   Future<Null> checkPreferance() async {

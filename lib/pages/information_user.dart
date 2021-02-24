@@ -49,6 +49,7 @@ class _InformationUserState extends State<InformationUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     
       body: Container(
         //height: 500,
         child: Stack(
@@ -105,10 +106,12 @@ class _InformationUserState extends State<InformationUser> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'บัญชีธนาคาร',
-                    style: TextStyle(fontSize: 12),
-                  ),
+                  userModel.userAdress.isEmpty
+                      ? Text('บัญชีธนาคาร')
+                      : Text(
+                          '${userModel.userBankName}',
+                          style: TextStyle(fontSize: 12),
+                        ),
                   Text(
                     '${userModel.userBankNumber}',
                     style: TextStyle(fontSize: 12),
@@ -237,6 +240,6 @@ class _InformationUserState extends State<InformationUser> {
     MaterialPageRoute materialPageRoute = MaterialPageRoute(
       builder: (context) => AddInformationUser(),
     );
-    Navigator.push(context, materialPageRoute);
+    Navigator.push(context, materialPageRoute).then((value) => readUserInfo());
   }
 }

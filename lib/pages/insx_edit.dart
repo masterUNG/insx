@@ -42,21 +42,41 @@ class _InsxEditState extends State<InsxEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('บันทึกข้อมูล'),
+        title: Text(
+          'บันทึกข้อมูล',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
       ),
-      body: Column(
-        children: [
-          nameCus(),
-          ca(),
-          peaNo(),
-          writeId(),
-          address(),
-          showLocation(),
-          SizedBox(
-            height: 30,
-          ),
-          groupImage(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            nameCus(),
+            ca(),
+            peaNo(),
+            writeId(),
+            address(),
+            showLocation(),
+            SizedBox(height: 30),
+            groupImage(),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'หมายเหตุ : กรณีที่พิกัดมิเตอร์อยู่ห่างจากพิกัด กฟภ. เกิน 300 เมตร ให้กดปุ่ม ถ่ายภาพหน้ามิเตอร์ไว้เป็นหลักฐาน',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -67,7 +87,7 @@ class _InsxEditState extends State<InsxEdit> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Container(
-              margin: EdgeInsets.only(top: 16),
+              margin: EdgeInsets.only(top: 14),
               child: Text(
                 'พิกัดมือถือ:',
                 style: TextStyle(fontSize: 14),
@@ -76,10 +96,10 @@ class _InsxEditState extends State<InsxEdit> {
           ),
           Expanded(
             child: Container(
-              margin: EdgeInsets.only(top: 16),
+              margin: EdgeInsets.only(top: 14),
               child: Text(
                 '$lat, $lng',
-                style: TextStyle(fontSize: 14, color: Colors.red),
+                style: TextStyle(fontSize: 12, color: Colors.red),
               ),
             ),
           ),
@@ -92,16 +112,16 @@ class _InsxEditState extends State<InsxEdit> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Container(
-              margin: EdgeInsets.only(top: 16),
+              margin: EdgeInsets.only(top: 14),
               child: Text(
-                'ชื่อ-นามสกุล:',
+                'ชื่อ-สกุล:',
                 style: TextStyle(fontSize: 14),
               ),
             ),
           ),
           Expanded(
             child: Container(
-              margin: EdgeInsets.only(top: 16),
+              margin: EdgeInsets.only(top: 14),
               child: Text(
                 '${insxModel2.cus_name}',
                 style: TextStyle(fontSize: 14),
@@ -194,7 +214,7 @@ class _InsxEditState extends State<InsxEdit> {
               margin: EdgeInsets.all(8),
               child: Text(
                 '${insxModel2.address}',
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(fontSize: 12),
               ),
             ),
           ),
@@ -226,10 +246,62 @@ class _InsxEditState extends State<InsxEdit> {
               Icons.no_photography,
               size: 30,
             ),
-            onPressed: () => editDataInsx(insxModel2),
+            onPressed: () => confirmDialog(),
+            //editDataInsx(insxModel2),
           ),
         ],
       );
+
+  Future<Null> confirmDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(
+          'คุณแน่ใจหรือว่า จะส่งมอบงานโดยไม่ถ่ายภาพมิเตอร์',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,fontStyle: FontStyle.normal,
+          ),
+        ),
+        children: [
+
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text('หากพิกัดไม่เกิน 300 เมตร ไม่ต้องถ่ายภาพ กด แน่ใจ', style: TextStyle(fontSize: 12),),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  OutlineButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'ไม่แน่ใจ',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  OutlineButton(
+                    onPressed: () => editDataInsx(insxModel2),
+                    child: Text(
+                      'แน่ใจ',
+                      style: TextStyle(
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   Future<Null> chooseCamera(ImageSource source) async {
     try {
@@ -272,7 +344,8 @@ class _InsxEditState extends State<InsxEdit> {
         MaterialPageRoute materialPageRoute = MaterialPageRoute(
           builder: (context) => HomePage(),
         );
-        Navigator.push(context, materialPageRoute);
+        Navigator.of(context)
+            .pushAndRemoveUntil(materialPageRoute, (route) => false);
       } else {
         normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
       }

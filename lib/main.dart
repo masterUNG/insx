@@ -9,9 +9,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PS23',
+      title: 'สดุดียี่สิบสาม',
       theme: ThemeData(
-        fontFamily: 'Prompt',
+          fontFamily: 'Prompt',
           brightness: Brightness.light,
           //primarySwatch: Colors.red,
           primaryColor: Colors.red[900],

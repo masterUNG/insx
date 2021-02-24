@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:psinsx/pages/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Dashbord extends StatefulWidget {
   Dashbord({Key key}) : super(key: key);
@@ -38,80 +40,119 @@ class _DashbordState extends State<Dashbord> {
                 mainAxisSpacing: 20,
                 crossAxisCount: 2,
                 children: <Widget>[
-                  Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.search,
-                            size: 80,
-                            color: Colors.red,
-                          ),
-                          Text(
-                            'ค้นหา',
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                      color: Colors.red[100]),
-                  Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.person,
-                            size: 80,
-                            color: Colors.red,
-                          ),
-                          Text(
-                            'ส่วนตัว',
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                      color: Colors.red[100]),
-                  Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.report,
-                            size: 80,
-                            color: Colors.red,
-                          ),
-                          Text(
-                            'รายงาน',
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                      color: Colors.red[100]),
-                  Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.dashboard_customize,
-                            size: 80,
-                            color: Colors.red,
-                          ),
-                          Text(
-                            'เอกสาร',
-                            style: TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                      color: Colors.red[100]),
+                  showLoadData(),
+                  showSearchDataLocation(context),
+                  showReport(),
+                  showDocuments(),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<Null> launchURL() async {
+    const url = 'https://pea23.com';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Widget showDocuments() {
+    return GestureDetector(
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.dashboard_customize,
+                size: 80,
+                color: Colors.red,
+              ),
+              Text(
+                'เอกสาร',
+                style: TextStyle(fontSize: 20),
+              )
+            ],
+          ),
+          color: Colors.red[100]),
+    );
+  }
+
+  Widget showReport() {
+    return GestureDetector(
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.receipt_outlined,
+                size: 80,
+                color: Colors.red,
+              ),
+              Text(
+                'รายงาน',
+                style: TextStyle(fontSize: 20),
+              )
+            ],
+          ),
+          color: Colors.red[100]),
+    );
+  }
+
+  Widget showSearchDataLocation(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        print('cikk');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SearchPage()));
+      },
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.search,
+                size: 80,
+                color: Colors.red,
+              ),
+              Text(
+                'ค้นหา',
+                style: TextStyle(fontSize: 20),
+              )
+            ],
+          ),
+          color: Colors.red[100]),
+    );
+  }
+
+  Widget showLoadData() {
+    return GestureDetector(
+      onTap: launchURL,
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.download_sharp,
+                size: 80,
+                color: Colors.red,
+              ),
+              Text(
+                'ดึงข้อมูล',
+                style: TextStyle(fontSize: 20),
+              )
+            ],
+          ),
+          color: Colors.red[100]),
     );
   }
 }

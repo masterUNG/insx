@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:psinsx/models/user_model.dart';
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/my_style.dart';
+import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddInformationUser extends StatefulWidget {
@@ -15,6 +19,7 @@ class AddInformationUser extends StatefulWidget {
 
 class _AddInformationUserState extends State<AddInformationUser> {
   UserModel userModel;
+  File file;
   String userAddress,
       userEmail,
       userPhone,
@@ -57,7 +62,10 @@ class _AddInformationUserState extends State<AddInformationUser> {
       body: userModel == null ? MyStyle().showProgress() : showContent(),
       appBar: AppBar(
         title: Text(
-          'อัพเดทข้อมูล',style: TextStyle(fontSize: 14,),
+          'อัพเดทข้อมูลส่วนตัว',
+          style: TextStyle(
+            fontSize: 14,
+          ),
         ),
       ),
     );
@@ -71,32 +79,194 @@ class _AddInformationUserState extends State<AddInformationUser> {
             eamilFrom(),
             addressFrom(),
             phoneFrom(),
+            nameBankFrom(),
+            numberBankFrom(),
+            SizedBox(height: 20),
+            editButton()
           ],
         ),
       );
+
+  Widget numberBankFrom() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 16),
+            width: 300,
+            child: TextFormField(keyboardType: TextInputType.number,
+              onChanged: (value) => userBankNumber = value,
+              initialValue: userBankNumber,
+              style: TextStyle(fontSize: 12),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(), labelText: 'เลขบัญชี'),
+            ),
+          ),
+        ],
+      );
+
+  Widget nameBankFrom() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 16),
+            width: 300,
+            child: TextFormField(
+              onChanged: (value) => userBankName = value,
+              initialValue: userBankName,
+              style: TextStyle(fontSize: 12),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(), labelText: 'ธนาคาร'),
+            ),
+          ),
+        ],
+      );
+
+  Widget editButton() {
+    return Container(
+      width: 300,
+      child: RaisedButton.icon(
+        color: Colors.red,
+        onPressed: () => confirmDialog(),
+        icon: Icon(
+          Icons.save,
+          color: Colors.white,
+        ),
+        label: Text(
+          ' อัพเดทข้อมูล',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Future<Null> confirmDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(
+          'ยืนยันการอัพเดทข้อมูล?',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.normal,
+          ),
+        ),
+        children: [
+          Column(
+            children: [
+              Icon(
+                Icons.person_pin,
+                size: 60,
+                color: Colors.red[200],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  OutlineButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'ไม่',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  OutlineButton(
+                    onPressed: () {
+                      print('click...');
+                      Navigator.pop(context);
+                      editThread();
+                    },
+                    child: Text(
+                      'ใช่',
+                      style: TextStyle(
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<Null> editThread() async {
+    Random random = Random();
+    int i = random.nextInt(100000);
+    String nameFile = 'staff$i.jpg';
+
+    Map<String, dynamic> map = Map();
+    map['file'] = await MultipartFile.fromFile(file.path, filename: nameFile);
+    FormData formData = FormData.fromMap(map);
+
+    String urlUpload = '${MyConstant().domain}/apipsinsx/saveFile.php';
+    await Dio().post(urlUpload, data: formData).then((value) async {
+      userImg = '${MyConstant().domain}/apipsinsx/upload/$nameFile';
+
+      String id = userModel.userId;
+      String url =
+          '${MyConstant().domain}/apipsinsx/editUserWhereId.php?isAdd=true&user_id=$id&user_email=$userEmail&user_phone=$userPhone&user_adress=$userAddress&user_bank_name=$userBankName&user_bank_number=$userBankNumber&user_img=$userImg';
+
+      Response response = await Dio().get(url);
+      if (response.toString() == 'true') {
+        Navigator.pop(context);
+      } else {
+        normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
+      }
+    });
+  }
 
   Widget showImage() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-            icon: Icon(
-              Icons.camera_alt,
-              color: Colors.grey,
-            ),
-            onPressed: () {}),
-        CircularProfileAvatar(
-          '${userModel.userImg}',
-          borderWidth: 4.0,
+          icon: Icon(
+            Icons.camera_alt,
+            color: Colors.grey,
+          ),
+          onPressed: () => chooseImage(ImageSource.camera),
+        ),
+        Container(
+          width: 100,
+          height: 100,
+          child: file == null
+              ? CircularProfileAvatar(
+                  '${userModel.userImg}',
+                  borderWidth: 4.0,
+                )
+              : Image.file(
+                  file,
+                  fit: BoxFit.cover,
+                ),
         ),
         IconButton(
-            icon: Icon(
-              Icons.photo_album_rounded,
-              color: Colors.grey,
-            ),
-            onPressed: () {}),
+          icon: Icon(
+            Icons.photo_album_rounded,
+            color: Colors.grey,
+          ),
+          onPressed: () => chooseImage(ImageSource.gallery),
+        ),
       ],
     );
+  }
+
+  Future<Null> chooseImage(ImageSource source) async {
+    try {
+      var object = await ImagePicker.pickImage(
+        source: source,
+        maxWidth: 600,
+        maxHeight: 600,
+      );
+      setState(() {
+        file = object;
+      });
+    } catch (e) {}
   }
 
   Widget phoneFrom() => Row(
@@ -105,7 +275,7 @@ class _AddInformationUserState extends State<AddInformationUser> {
           Container(
             margin: EdgeInsets.only(top: 16),
             width: 300,
-            child: TextFormField(
+            child: TextFormField(keyboardType: TextInputType.number,
               onChanged: (value) => userPhone = value,
               initialValue: userPhone,
               style: TextStyle(fontSize: 12),
@@ -122,7 +292,7 @@ class _AddInformationUserState extends State<AddInformationUser> {
           Container(
             margin: EdgeInsets.only(top: 16),
             width: 300,
-            child: TextFormField(
+            child: TextFormField(keyboardType: TextInputType.emailAddress,
               onChanged: (value) => userEmail = value,
               initialValue: userEmail,
               style: TextStyle(fontSize: 12),

@@ -1,7 +1,6 @@
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:psinsx/pages/dashbord.dart';
-import 'package:psinsx/pages/dmsx_page.dart';
 import 'package:psinsx/pages/help_page.dart';
 import 'package:psinsx/pages/information_user.dart';
 import 'package:psinsx/pages/insx_page.dart';
@@ -107,20 +106,6 @@ class _HomePageState extends State<HomePage> {
                   });
                   Navigator.pop(context);
                 }),
-            // ListTile(
-            //     leading: Icon(Icons.image_search),
-            //     title: Text('DMSx'),
-            //     subtitle: Text(
-            //       'งานงดจ่ายไฟ',
-            //       style: TextStyle(fontSize: 8),
-            //     ),
-            //     trailing: Icon(Icons.arrow_right),
-            //     onTap: () {
-            //       setState(() {
-            //         currentWidget = DmsxPage();
-            //       });
-            //       Navigator.pop(context);
-            //     }),
             ListTile(
                 leading: Icon(Icons.person_pin),
                 title: Text('Information'),
@@ -135,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                   });
                   Navigator.pop(context);
                 }),
-                   ListTile(
+            ListTile(
                 leading: Icon(Icons.help),
                 title: Text('Help'),
                 subtitle: Text(
@@ -162,9 +147,16 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        title: Text(
-          nameUser == null ? 'User' : '$nameUser login',
-          style: TextStyle(fontSize: 14),
+        title: Center(
+          child: Text(
+            'PSINSX',
+            //nameUser == null ? 'User' : '$nameUser login',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 3,
+            ),
+          ),
         ),
         actions: [
           IconButton(
