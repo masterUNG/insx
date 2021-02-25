@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       title: 'สดุดียี่สิบสาม',
       theme: ThemeData(
           fontFamily: 'Prompt',
-          brightness: Brightness.light,
+          brightness: Brightness.dark,
           //primarySwatch: Colors.red,
           primaryColor: Colors.red[900],
           accentColor: Colors.redAccent,
