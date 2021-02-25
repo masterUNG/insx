@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:psinsx/models/data_location_model.dart';
+import 'package:psinsx/utility/normal_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -13,27 +15,49 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   List<DataLocationModel> dataLocationModels = [];
   List<DataLocationModel> filterDataLocationModels = List();
-  final debouncer = Debouncer(milliseconds: 500);
+
+  String search;
+  String nodata = 'กรุณากรอก ca ที่ต้องการค้นหา';
 
   @override
   void initState() {
     super.initState();
-    readAllData();
   }
 
   Future<Null> readAllData() async {
-    String url = 'https://pea23.com/apipsinsx/getAllDataLocation.php';
+    if (dataLocationModels.length != 0) {
+      dataLocationModels.clear();
+    }
+    String url =
+        'https://pea23.com/apipsinsx/getAllDataLocationWhereCa.php?isAdd=true&ca=$search';
 
-    Response response = await get(url);
-    var result = json.decode(response.body);
-    print('result ====>>> $result');
-    for (var map in result) {
-      DataLocationModel dataLocationModel = DataLocationModel.fromJson(map);
-      print('name ====>>> ${dataLocationModel.ca}');
+    var response = await Dio().get(url);
+
+    print('response ===>>> $response');
+
+    if (response.toString() == 'null') {
       setState(() {
-        dataLocationModels.add(dataLocationModel);
-        filterDataLocationModels = dataLocationModels;
+        nodata = 'ไม่พบข้อมูฃ CA: $search';
       });
+    } else {
+      var result = json.decode(response.data);
+      print('result ====>>> $result');
+      for (var map in result) {
+        DataLocationModel dataLocationModel = DataLocationModel.fromJson(map);
+        print('name ====>>> ${dataLocationModel.ca}');
+        setState(() {
+          dataLocationModels.add(dataLocationModel);
+        });
+      }
+    }
+  }
+
+  Future<Null> launchURL() async {
+    var url = 'https://www.google.co.th/maps';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -46,7 +70,15 @@ class _SearchPageState extends State<SearchPage> {
         body: Column(
           children: [
             searchText(),
-            showListView(),
+            dataLocationModels.length == 0
+                ? Center(
+                    child: Text(
+                    nodata,
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ))
+                : showListView(),
           ],
         ));
   }
@@ -54,18 +86,29 @@ class _SearchPageState extends State<SearchPage> {
   Widget searchText() {
     return Padding(
       padding: EdgeInsets.all(8.0),
-      child: TextField(
-        decoration: InputDecoration(hintText: 'กรอกชื่อ'),
-        onChanged: (value) {
-          debouncer.run(() {
-            setState(() {
-              filterDataLocationModels = dataLocationModels
-                  .where((u) =>
-                      (u.cusName.toLowerCase().contains(value.toLowerCase())))
-                  .toList();
-            });
-          });
-        },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 250,
+            child: TextField(
+              decoration: InputDecoration(hintText: 'กรอก ca'),
+              onChanged: (value) => search = value.trim(),
+            ),
+          ),
+          IconButton(
+              icon: Icon(
+                Icons.search,
+                size: 40,
+              ),
+              onPressed: () {
+                if (search?.isEmpty ?? true) {
+                  normalDialog(context, 'ห้ามมีช่องว่าง');
+                } else {
+                  readAllData();
+                }
+              }),
+        ],
       ),
     );
   }
@@ -73,18 +116,25 @@ class _SearchPageState extends State<SearchPage> {
   Widget showListView() {
     return Expanded(
       child: ListView.builder(
-          itemCount: filterDataLocationModels.length,
+          itemCount: dataLocationModels.length,
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-              onTap: () {
-                print('clik.... ${filterDataLocationModels[index].ptcInsx}');
+              onTap: () async {
+                print('${dataLocationModels[index].ptcInsx}');
+
+                String url = dataLocationModels[index].ptcInsx;
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'ไม่พบ $url';
+                }
               },
               child: Card(
                 child: ListTile(
                   leading: Icon(Icons.location_on_outlined),
-                  title: Text(filterDataLocationModels[index].ca),
+                  title: Text(dataLocationModels[index].ca),
                   subtitle: Text(
-                    filterDataLocationModels[index].cusName,
+                    dataLocationModels[index].cusName,
                     style: TextStyle(
                       fontSize: 14,
                     ),
@@ -94,20 +144,5 @@ class _SearchPageState extends State<SearchPage> {
             );
           }),
     );
-  }
-}
-
-class Debouncer {
-  final int milliseconds;
-  VoidCallback action;
-  Timer _timer;
-
-  Debouncer({this.milliseconds});
-
-  run(VoidCallback action) {
-    if (null != _timer) {
-      _timer.cancel();
-    }
-    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

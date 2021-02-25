@@ -38,6 +38,8 @@ dependencies:
   image_picker: ^0.6.7+22
   circular_profile_avatar: ^1.0.6
   version_check: ^0.1.1
+  new_version: ^0.0.6
+  package_info: ^0.4.3+4
 
 flutter_icons:
   android: true

@@ -20,20 +20,19 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _showLogo(),
-              _showNameApp(),
-              SizedBox(height: 30),
-              _userForm(),
-              SizedBox(height: 20),
-              _passwordForm(),
-              SizedBox(height: 20),
-              _loginButton(),
-            ],
-          ),
+        child: Column(
+          //mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 30),
+            _showLogo(),
+            _showNameApp(),
+            SizedBox(height: 30),
+            _userForm(),
+            SizedBox(height: 20),
+            _passwordForm(),
+            SizedBox(height: 20),
+            _loginButton(),
+          ],
         ),
       ),
     );
@@ -148,7 +147,7 @@ class _SignInState extends State<SignIn> {
     return Container(
       child: Icon(
         Icons.notification_important,
-        size: 160,
+        size: 80,
         color: Colors.red,
       ),
     );

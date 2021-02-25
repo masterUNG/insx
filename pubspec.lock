@@ -275,6 +275,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0-nullsafety.3"
+  new_version:
+    dependency: "direct main"
+    description:
+      name: new_version
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.6"
   octo_image:
     dependency: transitive
     description:
@@ -283,7 +290,7 @@ packages:
     source: hosted
     version: "0.3.0"
   package_info:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: package_info
       url: "https://pub.dartlang.org"

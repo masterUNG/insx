@@ -1,7 +1,11 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:psinsx/models/insx_model2.dart';
 import 'package:psinsx/pages/insx_edit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MapInsx extends StatefulWidget {
   final List<InsxModel2> insxModel2s;
@@ -22,6 +26,27 @@ class _MapInsxState extends State<MapInsx> {
     insxModel2s = widget.insxModel2s;
   }
 
+  Future<Null> myReadAPI() async {
+    print('myReadAPI work ===:>>>');
+    insxModel2s.clear();
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String workername = preferences.getString('staffname');
+
+    String url =
+        'https://pea23.com/apipsinsx/getInsxWhereUser.php?isAdd=true&worker_name=$workername';
+
+        await Dio().get(url).then((value) {
+          for (var item in json.decode(value.data)) {
+            InsxModel2 model2 = InsxModel2.fromMap(item);
+            insxModel2s.add(model2);
+          }
+          setState(() {
+            myAllMarker();
+          });
+        });
+  }
+
   Set<Marker> myAllMarker() {
     List<Marker> markers = List();
     List<double> hues = [80.0, 60.0, 150.0, 20.0];
@@ -36,9 +61,17 @@ class _MapInsxState extends State<MapInsx> {
           snippet: item.pea_no,
           onTap: () {
             MaterialPageRoute route = MaterialPageRoute(
-              builder: (context) => InsxEdit(insxModel2: item,),
+              builder: (context) => InsxEdit(
+                insxModel2: item,
+                fromMap: true,
+              ),
             );
-            Navigator.push(context, route);
+            Navigator.push(context, route).then(
+              (value) {
+                print('Back Form insx');
+                myReadAPI();
+              },
+            );
           },
         ),
       );
@@ -84,17 +117,34 @@ class _MapInsxState extends State<MapInsx> {
           ),
         ),
       ),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: startMapLatLng,
-          zoom: 6,
-        ),
-        mapType: MapType.normal,
-        onMapCreated: (controller) => {},
-        markers: myAllMarker(),
-        myLocationButtonEnabled: true,
-        myLocationEnabled: true,
+      body: insxModel2s.length == 0 ? buildSecondMap() : buildMainMap(),
+    );
+  }
+
+  GoogleMap buildMainMap() {
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: startMapLatLng,
+        zoom: 6,
       ),
+      mapType: MapType.normal,
+      onMapCreated: (controller) => {},
+      markers: myAllMarker(),
+      myLocationButtonEnabled: true,
+      myLocationEnabled: true,
+    );
+  }
+
+    GoogleMap buildSecondMap() {
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: startMapLatLng,
+        zoom: 6,
+      ),
+      mapType: MapType.normal,
+      onMapCreated: (controller) => {},
+      myLocationButtonEnabled: true,
+      myLocationEnabled: true,
     );
   }
 

@@ -12,7 +12,8 @@ import 'package:psinsx/utility/normal_dialog.dart';
 
 class InsxEdit extends StatefulWidget {
   final InsxModel2 insxModel2;
-  InsxEdit({Key key, this.insxModel2}) : super(key: key);
+  final bool fromMap;
+  InsxEdit({Key key, this.insxModel2, this.fromMap}) : super(key: key);
 
   @override
   _InsxEditState createState() => _InsxEditState();
@@ -24,10 +25,12 @@ class _InsxEditState extends State<InsxEdit> {
   String urlImage;
   Location location = Location();
   double lat, lng;
+  bool fromMap;
 
   @override
   void initState() {
     insxModel2 = widget.insxModel2;
+    fromMap = widget.fromMap;
 
     location.onLocationChanged.listen((event) {
       setState(() {
@@ -260,16 +263,19 @@ class _InsxEditState extends State<InsxEdit> {
           'คุณแน่ใจหรือว่า จะส่งมอบงานโดยไม่ถ่ายภาพมิเตอร์',
           style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.bold,fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.normal,
           ),
         ),
         children: [
-
           Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('หากพิกัดไม่เกิน 300 เมตร ไม่ต้องถ่ายภาพ กด แน่ใจ', style: TextStyle(fontSize: 12),),
+                child: Text(
+                  'หากพิกัดไม่เกิน 300 เมตร ไม่ต้องถ่ายภาพ กด แน่ใจ',
+                  style: TextStyle(fontSize: 12),
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -286,7 +292,10 @@ class _InsxEditState extends State<InsxEdit> {
                     ),
                   ),
                   OutlineButton(
-                    onPressed: () => editDataInsx(insxModel2),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      editDataInsx(insxModel2);
+                    },
                     child: Text(
                       'แน่ใจ',
                       style: TextStyle(
@@ -342,10 +351,23 @@ class _InsxEditState extends State<InsxEdit> {
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {
         MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => HomePage(
+            statusINSx: true,
+          ),
         );
-        Navigator.of(context)
-            .pushAndRemoveUntil(materialPageRoute, (route) => false);
+
+        print('fromMap === $fromMap');
+
+        if (fromMap != null) {
+          print('if check Null workd');
+          if (fromMap) {
+            print('fromMap ===>>> $fromMap');
+            Navigator.pop(context);
+          }
+        } else {
+          Navigator.of(context)
+              .pushAndRemoveUntil(materialPageRoute, (route) => false);
+        }
       } else {
         normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
       }

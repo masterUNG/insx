@@ -88,7 +88,7 @@ class VersionCheck {
       throw 'Could not launch $url';
     }
   }
-}
+}//// delete
 
 Future<StoreVersionAndUrl> _getIOSStoreVersionAndUrl(String bundleId) async {
   final resp =

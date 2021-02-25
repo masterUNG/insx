@@ -8,7 +8,9 @@ import 'package:psinsx/pages/signin_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  //HomePage({Key key}) : super(key: key);
+  bool statusINSx;  // false => Non Back frome edit INSx
+  HomePage({Key key, this.statusINSx}): super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -16,10 +18,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String nameUser, userEmail, userImge;
+  bool status;
+
+    Widget currentWidget = Dashbord();
 
   @override
   void initState() {
     super.initState();
+    status = widget.statusINSx;
+    if (status != null) {
+      if (status) {
+        currentWidget = InsxPage();
+      }
+    }
     findUser();
   }
 
@@ -42,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
 
-  Widget currentWidget = Dashbord();
+
 
   @override
   Widget build(BuildContext context) {

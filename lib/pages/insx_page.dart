@@ -37,7 +37,19 @@ class _InsxPageState extends State<InsxPage> {
     readInsx();
   }
 
+  void setToOrigin(){
+    loadStatus =true;
+    status = true;
+    insxModels.clear();
+    insxModel2s.clear();
+    colorIcons.clear();
+    files.clear();
+  }
+
   Future<Null> readInsx() async {
+    if (insxModel2s.length != 0) {
+      setToOrigin();
+    }
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String workername = preferences.getString('staffname');
 
@@ -78,7 +90,9 @@ class _InsxPageState extends State<InsxPage> {
               insxModel2s: insxModel2s,
             ),
           );
-          Navigator.push(context, materialPageRoute);
+          Navigator.push(context, materialPageRoute).then(
+            (value) => readInsx(),
+          );
         },
         child: Icon(Icons.map_sharp),
       ),
