@@ -19,20 +19,22 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          //mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 30),
-            _showLogo(),
-            _showNameApp(),
-            SizedBox(height: 30),
-            _userForm(),
-            SizedBox(height: 20),
-            _passwordForm(),
-            SizedBox(height: 20),
-            _loginButton(),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 30),
+              _showLogo(),
+              _showNameApp(),
+              SizedBox(height: 30),
+              _userForm(),
+              SizedBox(height: 20),
+              _passwordForm(),
+              SizedBox(height: 20),
+              _loginButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -43,6 +45,7 @@ class _SignInState extends State<SignIn> {
         child: RaisedButton(
           color: Colors.red[900],
           onPressed: () {
+            
             if (user == null ||
                 user.isEmpty ||
                 password == null ||

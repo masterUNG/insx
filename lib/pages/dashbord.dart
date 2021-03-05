@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:psinsx/pages/doc_page.dart';
+import 'package:psinsx/pages/report_page.dart';
 import 'package:psinsx/pages/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -64,6 +66,10 @@ class _DashbordState extends State<Dashbord> {
 
   Widget showDocuments() {
     return GestureDetector(
+      onTap: (){
+         Navigator.push(
+            context, MaterialPageRoute(builder: (context) => DocPage()));
+      },
       child: Container(
           padding: const EdgeInsets.all(8),
           child: Column(
@@ -75,8 +81,8 @@ class _DashbordState extends State<Dashbord> {
                 color: Colors.red,
               ),
               Text(
-                'เอกสาร',
-                style: TextStyle(fontSize: 20),
+                'ผลดำเนินการ',
+                style: TextStyle(fontSize: 18,color: Colors.grey[800]),
               )
             ],
           ),
@@ -86,6 +92,10 @@ class _DashbordState extends State<Dashbord> {
 
   Widget showReport() {
     return GestureDetector(
+      onTap: (){
+         Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ReportPage()));
+      },
       child: Container(
           padding: const EdgeInsets.all(8),
           child: Column(
@@ -97,8 +107,8 @@ class _DashbordState extends State<Dashbord> {
                 color: Colors.red,
               ),
               Text(
-                'รายงาน',
-                style: TextStyle(fontSize: 20),
+                'งานประจำวัน',
+                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
               )
             ],
           ),
@@ -109,7 +119,6 @@ class _DashbordState extends State<Dashbord> {
   Widget showSearchDataLocation(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('cikk');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => SearchPage()));
       },
@@ -124,8 +133,8 @@ class _DashbordState extends State<Dashbord> {
                 color: Colors.red,
               ),
               Text(
-                'ค้นหา',
-                style: TextStyle(fontSize: 20),
+                'ค้นหาพิกัด',
+                style: TextStyle(fontSize: 18,color: Colors.grey[800]),
               )
             ],
           ),
@@ -148,7 +157,7 @@ class _DashbordState extends State<Dashbord> {
               ),
               Text(
                 'ดึงข้อมูล',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 18,color: Colors.grey[800]),
               )
             ],
           ),

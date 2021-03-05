@@ -44,10 +44,15 @@ class _InsxEditState extends State<InsxEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'บันทึกข้อมูล',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100.0),
+        child: AppBar(
+          toolbarHeight: 100,
+          title: Center(
+            child: Text(
+              'แก้ไขข้อมูล'
+            ),
+          ),
         ),
       ),
       body: SingleChildScrollView(

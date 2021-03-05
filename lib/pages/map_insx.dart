@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:psinsx/models/insx_model2.dart';
@@ -36,15 +37,15 @@ class _MapInsxState extends State<MapInsx> {
     String url =
         'https://pea23.com/apipsinsx/getInsxWhereUser.php?isAdd=true&worker_name=$workername';
 
-        await Dio().get(url).then((value) {
-          for (var item in json.decode(value.data)) {
-            InsxModel2 model2 = InsxModel2.fromMap(item);
-            insxModel2s.add(model2);
-          }
-          setState(() {
-            myAllMarker();
-          });
-        });
+    await Dio().get(url).then((value) {
+      for (var item in json.decode(value.data)) {
+        InsxModel2 model2 = InsxModel2.fromMap(item);
+        insxModel2s.add(model2);
+      }
+      setState(() {
+        myAllMarker();
+      });
+    });
   }
 
   Set<Marker> myAllMarker() {
@@ -58,7 +59,7 @@ class _MapInsxState extends State<MapInsx> {
         position: LatLng(double.parse(item.lat), double.parse(item.lng)),
         infoWindow: InfoWindow(
           title: item.cus_name,
-          snippet: item.pea_no,
+          snippet: 'pea: ${item.pea_no}',
           onTap: () {
             MaterialPageRoute route = MaterialPageRoute(
               builder: (context) => InsxEdit(
@@ -68,7 +69,7 @@ class _MapInsxState extends State<MapInsx> {
             );
             Navigator.push(context, route).then(
               (value) {
-                print('Back Form insx');
+                //print('Back Form insx');
                 myReadAPI();
               },
             );
@@ -107,17 +108,35 @@ class _MapInsxState extends State<MapInsx> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            insxModel2s.length == 0
-                ? 'ข้อมูล : ? รายการ'
-                : 'ข้อมูล : ${insxModel2s.length} รายการ',
-            style: TextStyle(fontSize: 14),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100.0),
+        child: AppBar(
+          toolbarHeight: 100,
+          title: Center(
+            child: Text(
+              insxModel2s.length == 0
+                  ? 'ข้อมูล : ? รายการ'
+                  : 'ข้อมูล : ${insxModel2s.length} รายการ',
+              style: TextStyle(fontSize: 14),
+            ),
           ),
         ),
       ),
       body: insxModel2s.length == 0 ? buildSecondMap() : buildMainMap(),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Colors.purple,
+      //   onPressed: () async {
+      //     await LaunchApp.openApp(
+      //       androidPackageName: 'com.pea.INSx',
+      //     );
+      //   },
+      //   child: Text('PEA'),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // backgroundColor: Colors.purple,
+      // bottomNavigationBar: BottomAppBar(
+      //   color: Colors.white,
+      // ),
     );
   }
 
@@ -135,7 +154,7 @@ class _MapInsxState extends State<MapInsx> {
     );
   }
 
-    GoogleMap buildSecondMap() {
+  GoogleMap buildSecondMap() {
     return GoogleMap(
       initialCameraPosition: CameraPosition(
         target: startMapLatLng,

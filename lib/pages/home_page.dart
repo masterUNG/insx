@@ -9,18 +9,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   //HomePage({Key key}) : super(key: key);
-  bool statusINSx;  // false => Non Back frome edit INSx
-  HomePage({Key key, this.statusINSx}): super(key: key);
+  bool statusINSx; // false => Non Back frome edit INSx
+  HomePage({Key key, this.statusINSx}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String nameUser, userEmail, userImge;
+  String nameUser, userEmail, userImge, userId;
   bool status;
 
-    Widget currentWidget = Dashbord();
+  Widget currentWidget = Dashbord();
 
   @override
   void initState() {
@@ -40,9 +40,13 @@ class _HomePageState extends State<HomePage> {
       nameUser = preferences.getString('staffname');
       userEmail = preferences.getString('user_email');
       userImge = preferences.getString('user_img');
+      userId = preferences.getString('id');
+
     });
     print('nameUser ==== $nameUser');
     print('userImage === $userImge');
+    //print('userId === $userId');
+    print('userEmail === $userEmail');
   }
 
   Future<Null> signOutProcess() async {
@@ -52,8 +56,6 @@ class _HomePageState extends State<HomePage> {
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => SignIn());
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +86,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -157,26 +160,31 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            'PSINSX',
-            //nameUser == null ? 'User' : '$nameUser login',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 3,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100.0),
+        child: AppBar(
+          toolbarHeight: 100,
+     
+          title: Center(
+            child: Text(
+              'บริษัท สดุดียี่สิบสาม จำกัด',
+              //nameUser == null ? 'User' : '$nameUser login',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 3,
+              ),
             ),
           ),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.notifications,
+                  color: Colors.red[100],
+                ),
+                onPressed: () {})
+          ],
         ),
-        actions: [
-          IconButton(
-              icon: Icon(
-                Icons.notifications,
-                color: Colors.red[100],
-              ),
-              onPressed: () {})
-        ],
       ),
       body: currentWidget,
     );

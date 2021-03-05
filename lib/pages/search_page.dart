@@ -64,8 +64,12 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('ค้นหา'),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(100.0),
+          child: AppBar(
+            toolbarHeight: 100,
+            title: Text('ค้นหา'),
+          ),
         ),
         body: Column(
           children: [

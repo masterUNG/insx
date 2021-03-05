@@ -21,6 +21,7 @@ class InsxModel2 {
   final String noti_date;
   final String update_date;
   final String timestamp;
+  final String workImage;
   final String worker_code;
   final String worker_name;
   InsxModel2({
@@ -44,6 +45,7 @@ class InsxModel2 {
     this.noti_date,
     this.update_date,
     this.timestamp,
+    this.workImage,
     this.worker_code,
     this.worker_name,
   });
@@ -69,6 +71,7 @@ class InsxModel2 {
     String noti_date,
     String update_date,
     String timestamp,
+    String workImage,
     String worker_code,
     String worker_name,
   }) {
@@ -93,6 +96,7 @@ class InsxModel2 {
       noti_date: noti_date ?? this.noti_date,
       update_date: update_date ?? this.update_date,
       timestamp: timestamp ?? this.timestamp,
+      workImage: workImage ?? this.workImage,
       worker_code: worker_code ?? this.worker_code,
       worker_name: worker_name ?? this.worker_name,
     );
@@ -120,6 +124,7 @@ class InsxModel2 {
       'noti_date': noti_date,
       'update_date': update_date,
       'timestamp': timestamp,
+      'work_image': workImage,
       'worker_code': worker_code,
       'worker_name': worker_name,
     };
@@ -149,6 +154,7 @@ class InsxModel2 {
       noti_date: map['noti_date'],
       update_date: map['update_date'],
       timestamp: map['timestamp'],
+      workImage: map['work_image'],
       worker_code: map['worker_code'],
       worker_name: map['worker_name'],
     );
@@ -160,7 +166,7 @@ class InsxModel2 {
 
   @override
   String toString() {
-    return 'InsxModel2(id: $id, ca: $ca, pea_no: $pea_no, cus_name: $cus_name, cus_id: $cus_id, invoice_no: $invoice_no, bill_date: $bill_date, bp_no: $bp_no, write_id: $write_id, portion: $portion, ptc_no: $ptc_no, address: $address, new_period_date: $new_period_date, write_date: $write_date, lat: $lat, lng: $lng, invoice_status: $invoice_status, noti_date: $noti_date, update_date: $update_date, timestamp: $timestamp, worker_code: $worker_code, worker_name: $worker_name)';
+    return 'InsxModel2(id: $id, ca: $ca, pea_no: $pea_no, cus_name: $cus_name, cus_id: $cus_id, invoice_no: $invoice_no, bill_date: $bill_date, bp_no: $bp_no, write_id: $write_id, portion: $portion, ptc_no: $ptc_no, address: $address, new_period_date: $new_period_date, write_date: $write_date, lat: $lat, lng: $lng, invoice_status: $invoice_status, noti_date: $noti_date, update_date: $update_date, timestamp: $timestamp, work_image: $workImage, worker_code: $worker_code, worker_name: $worker_name)';
   }
 
   @override
@@ -188,6 +194,7 @@ class InsxModel2 {
       o.noti_date == noti_date &&
       o.update_date == update_date &&
       o.timestamp == timestamp &&
+      o.workImage == workImage &&
       o.worker_code == worker_code &&
       o.worker_name == worker_name;
   }
@@ -214,6 +221,7 @@ class InsxModel2 {
       noti_date.hashCode ^
       update_date.hashCode ^
       timestamp.hashCode ^
+      workImage.hashCode ^
       worker_code.hashCode ^
       worker_name.hashCode;
   }

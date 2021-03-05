@@ -60,11 +60,14 @@ class _AddInformationUserState extends State<AddInformationUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: userModel == null ? MyStyle().showProgress() : showContent(),
-      appBar: AppBar(
-        title: Text(
-          'อัพเดทข้อมูลส่วนตัว',
-          style: TextStyle(
-            fontSize: 14,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100.0),
+        child: AppBar(
+          toolbarHeight: 100,
+          title: Center(
+            child: Text(
+              'แก้ไขข้อมูลส่วนตัว'
+            ),
           ),
         ),
       ),
