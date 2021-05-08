@@ -285,7 +285,7 @@ class _InsxEditState extends State<InsxEdit> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  OutlineButton(
+                  MaterialButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -296,7 +296,7 @@ class _InsxEditState extends State<InsxEdit> {
                       ),
                     ),
                   ),
-                  OutlineButton(
+                  MaterialButton(
                     onPressed: () {
                       Navigator.pop(context);
                       editDataInsx(insxModel2);

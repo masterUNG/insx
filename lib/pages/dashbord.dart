@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:psinsx/pages/doc_page.dart';
+import 'package:psinsx/pages/oil_page.dart';
 import 'package:psinsx/pages/report_page.dart';
 import 'package:psinsx/pages/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +32,9 @@ class _DashbordState extends State<Dashbord> {
 
   @override
   Widget build(BuildContext context) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+ ));
     return Scaffold(
       body: Container(
         child: CustomScrollView(
@@ -46,12 +51,39 @@ class _DashbordState extends State<Dashbord> {
                   showSearchDataLocation(context),
                   showReport(),
                   showDocuments(),
+                  showValueOil(),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+    Widget showValueOil() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => OilPage()));
+      },
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.pedal_bike,
+                size: 80,
+                color: Colors.red,
+              ),
+              Text(
+                'เติมน้ำมัน',
+                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
+              )
+            ],
+          ),
+          color: Colors.red[100]),
     );
   }
 
@@ -66,8 +98,8 @@ class _DashbordState extends State<Dashbord> {
 
   Widget showDocuments() {
     return GestureDetector(
-      onTap: (){
-         Navigator.push(
+      onTap: () {
+        Navigator.push(
             context, MaterialPageRoute(builder: (context) => DocPage()));
       },
       child: Container(
@@ -82,7 +114,7 @@ class _DashbordState extends State<Dashbord> {
               ),
               Text(
                 'ผลดำเนินการ',
-                style: TextStyle(fontSize: 18,color: Colors.grey[800]),
+                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
               )
             ],
           ),
@@ -92,8 +124,8 @@ class _DashbordState extends State<Dashbord> {
 
   Widget showReport() {
     return GestureDetector(
-      onTap: (){
-         Navigator.push(
+      onTap: () {
+        Navigator.push(
             context, MaterialPageRoute(builder: (context) => ReportPage()));
       },
       child: Container(
@@ -134,7 +166,7 @@ class _DashbordState extends State<Dashbord> {
               ),
               Text(
                 'ค้นหาพิกัด',
-                style: TextStyle(fontSize: 18,color: Colors.grey[800]),
+                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
               )
             ],
           ),
@@ -157,7 +189,7 @@ class _DashbordState extends State<Dashbord> {
               ),
               Text(
                 'ดึงข้อมูล',
-                style: TextStyle(fontSize: 18,color: Colors.grey[800]),
+                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
               )
             ],
           ),

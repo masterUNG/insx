@@ -25,6 +25,7 @@ class _InformationUserState extends State<InformationUser> {
     super.initState();
     readUserInfo();
   }
+  
 
   Future<Null> readUserInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -49,7 +50,6 @@ class _InformationUserState extends State<InformationUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: Container(
         //height: 500,
         child: Stack(
@@ -78,6 +78,8 @@ class _InformationUserState extends State<InformationUser> {
             ),
             align(),
             SizedBox(height: 20),
+            showUserName(),
+            SizedBox(height: 20),
             showAdress(),
             SizedBox(height: 20),
             showPhone(),
@@ -87,6 +89,43 @@ class _InformationUserState extends State<InformationUser> {
           ],
         ),
       );
+
+  Widget showUserName() {
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(18.0),
+        child: Row(
+          children: [
+            Icon(
+              Icons.person,
+              color: Colors.red[200],
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  userModel.userAdress.isEmpty
+                      ? Text('User')
+                      : Text(
+                          'Username : ${userModel.username}',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                  Text(
+                    'Password : ${userModel.password}',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget showBank() {
     return Card(
@@ -175,6 +214,7 @@ class _InformationUserState extends State<InformationUser> {
             ),
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(

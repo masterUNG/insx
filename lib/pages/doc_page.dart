@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:psinsx/models/get_date_model.dart';
 import 'package:psinsx/models/insx_check_model.dart';
 import 'package:psinsx/models/insx_model.dart';
 import 'package:psinsx/pages/insx_showdata_check.dart';
@@ -22,6 +23,7 @@ class _DocPageState extends State<DocPage> {
   bool status = true; //มีข้อมูล
   List<InsxModel> insxModels = List();
   List<InsxCheckModel> insxCheckModels = [];
+  List<GetDatModel> getDateModels = [];
   List<Color> colorIcons = List();
   List<File> files = List();
   String urlImage;
@@ -29,24 +31,23 @@ class _DocPageState extends State<DocPage> {
   @override
   void initState() {
     super.initState();
+    readDate();
     readInsx();
-    //readDate();
   }
 
   void setToOrigin() {
     loadStatus = true;
     status = true;
     insxCheckModels.clear();
+    getDateModels.clear();
     colorIcons.clear();
     files.clear();
   }
 
   Future<Null> readDate() async {
-  
-    String url =
-        'https://pea23.com/apipsinsx/getDocWhereUserSuccess.php';
+    String url = 'https://pea23.com/apipsinsx/getDate.php';
 
-    print('url ====>>> $url');
+    //print('url ====>>> $url');
     await Dio().get(url).then((value) {
       setState(() {
         loadStatus = false;
@@ -56,10 +57,10 @@ class _DocPageState extends State<DocPage> {
         var result = json.decode(value.data);
         for (var map in result) {
           //print('map  ====>>> $map');
-          InsxCheckModel insxCheckModel = InsxCheckModel.fromJson(map);
-
+          GetDatModel getDatModel = GetDatModel.fromJson(map);
+          //print('map  ====>>> $map');
           setState(() {
-            insxCheckModels.add(insxCheckModel);
+            getDateModels.add(getDatModel);
           });
         }
       } else {
@@ -77,8 +78,8 @@ class _DocPageState extends State<DocPage> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String userId = preferences.getString('id');
     String stafName = preferences.getString('staffname');
-    print('userId === $userId');
-    print('staffName === $stafName');
+    //print('userId === $userId');
+    //print('staffName === $stafName');
 
     String url =
         'https://pea23.com/apipsinsx/getDocWhereUserSuccess.php?isAdd=true&user_id=$userId';
@@ -138,10 +139,14 @@ class _DocPageState extends State<DocPage> {
   Widget showListInsx() => SingleChildScrollView(
         child: Column(
           children: [
-            Card(
-              child: ListTile(
-                title: Text('ข้อมูลระหว่างวันที่ 28 ก.พ. 64 - 30 มี.ค. 64'),
-              ),
+            ListView.builder(
+              itemCount: getDateModels.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) =>
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: Text(getDateModels[index].getDatList)),
+                  ),
             ),
             Card(
               child: ListTile(
@@ -158,7 +163,7 @@ class _DocPageState extends State<DocPage> {
                 onTap: () {
                   MaterialPageRoute route = MaterialPageRoute(
                     builder: (context) => InsxShowDataCheck(
-                      insxCheckModels : insxCheckModels[index],
+                      insxCheckModels: insxCheckModels[index],
                     ),
                   );
                   Navigator.push(context, route);
@@ -167,13 +172,13 @@ class _DocPageState extends State<DocPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListTile(
-                 
-                      leading: Image.network(
-                        insxCheckModels[index].imageInsx,
-                        fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
-                      ),
+                      // leading: Image.network(
+                      //   insxCheckModels[index].imageInsx,
+                      //   fit: BoxFit.cover,
+                      //   width: 50,
+                      //   height: 50,
+                      // ),
+                      leading: Icon(Icons.check),
                       title: Text(
                         insxCheckModels[index].ca,
                         style: TextStyle(
@@ -182,7 +187,7 @@ class _DocPageState extends State<DocPage> {
                         ),
                       ),
                       subtitle: Text(
-                        '${insxCheckModels[index].cusName} \n${insxCheckModels[index].peaNo} ',
+                        '${insxCheckModels[index].cusName} \n${insxCheckModels[index].imgDate} ',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),

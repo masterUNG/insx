@@ -65,9 +65,7 @@ class _AddInformationUserState extends State<AddInformationUser> {
         child: AppBar(
           toolbarHeight: 100,
           title: Center(
-            child: Text(
-              'แก้ไขข้อมูลส่วนตัว'
-            ),
+            child: Text('แก้ไขข้อมูลส่วนตัว'),
           ),
         ),
       ),
@@ -76,6 +74,7 @@ class _AddInformationUserState extends State<AddInformationUser> {
 
   Widget showContent() => SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 20),
             showImage(),
@@ -85,7 +84,8 @@ class _AddInformationUserState extends State<AddInformationUser> {
             nameBankFrom(),
             numberBankFrom(),
             SizedBox(height: 20),
-            editButton()
+            editButton(),
+            SizedBox(height: 60),
           ],
         ),
       );
@@ -96,7 +96,8 @@ class _AddInformationUserState extends State<AddInformationUser> {
           Container(
             margin: EdgeInsets.only(top: 16),
             width: 300,
-            child: TextFormField(keyboardType: TextInputType.number,
+            child: TextFormField(
+              keyboardType: TextInputType.number,
               onChanged: (value) => userBankNumber = value,
               initialValue: userBankNumber,
               style: TextStyle(fontSize: 12),
@@ -212,14 +213,17 @@ class _AddInformationUserState extends State<AddInformationUser> {
       userImg = '${MyConstant().domain}/apipsinsx/upload/$nameFile';
 
       String id = userModel.userId;
+
       String url =
-          '${MyConstant().domain}/apipsinsx/editUserWhereId.php?isAdd=true&user_id=$id&user_email=$userEmail&user_phone=$userPhone&user_adress=$userAddress&user_bank_name=$userBankName&user_bank_number=$userBankNumber&user_img=$userImg';
+          'https://pea23.com/apipsinsx/editUserWhereId.php?isAdd=true&user_id=$id&user_email=$userEmail &user_phone=$userPhone&user_adress=$userAddress&user_bank_name=$userBankName&user_bank_number=$userBankNumber&user_img=$userImg';
 
       Response response = await Dio().get(url);
+
       if (response.toString() == 'true') {
+      
         Navigator.pop(context);
       } else {
-        normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
+        normalDialog(context, 'อัพเดทไม่ได้ กรุณาลองใหม่');
       }
     });
   }
@@ -278,7 +282,8 @@ class _AddInformationUserState extends State<AddInformationUser> {
           Container(
             margin: EdgeInsets.only(top: 16),
             width: 300,
-            child: TextFormField(keyboardType: TextInputType.number,
+            child: TextFormField(
+              keyboardType: TextInputType.number,
               onChanged: (value) => userPhone = value,
               initialValue: userPhone,
               style: TextStyle(fontSize: 12),
@@ -295,7 +300,8 @@ class _AddInformationUserState extends State<AddInformationUser> {
           Container(
             margin: EdgeInsets.only(top: 16),
             width: 300,
-            child: TextFormField(keyboardType: TextInputType.emailAddress,
+            child: TextFormField(
+              keyboardType: TextInputType.emailAddress,
               onChanged: (value) => userEmail = value,
               initialValue: userEmail,
               style: TextStyle(fontSize: 12),

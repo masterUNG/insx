@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -27,9 +28,11 @@ class _InsxPageState extends State<InsxPage> {
   bool status = true; //มีข้อมูล
   List<InsxModel> insxModels = List();
   List<InsxModel2> insxModel2s = [];
+  List<InsxModel2> filterInsxModel2s = [];
   List<Color> colorIcons = List();
   List<File> files = List();
-  String urlImage;
+  String urlImage, search;
+  final debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -37,8 +40,8 @@ class _InsxPageState extends State<InsxPage> {
     readInsx();
   }
 
-  void setToOrigin(){
-    loadStatus =true;
+  void setToOrigin() {
+    loadStatus = true;
     status = true;
     insxModels.clear();
     insxModel2s.clear();
@@ -68,6 +71,7 @@ class _InsxPageState extends State<InsxPage> {
             insxModel2s.add(insxModel2);
             colorIcons.add(calculageHues(insxModel2.noti_date));
             files.add(null);
+            filterInsxModel2s = insxModel2s;
           });
         }
       } else {
@@ -181,6 +185,7 @@ class _InsxPageState extends State<InsxPage> {
   Widget showListInsx() => SingleChildScrollView(
         child: Column(
           children: [
+            searchText(),
             Card(
               child: ListTile(
                 title: Text(insxModel2s.length == 0
@@ -189,14 +194,14 @@ class _InsxPageState extends State<InsxPage> {
               ),
             ),
             ListView.builder(
-              itemCount: insxModel2s.length,
+              itemCount: filterInsxModel2s.length,
               shrinkWrap: true,
               physics: ScrollPhysics(),
-              itemBuilder: (context, index) => GestureDetector(
+              itemBuilder: (context, int index) => GestureDetector(
                 onTap: () {
                   MaterialPageRoute route = MaterialPageRoute(
                     builder: (context) => InsxEdit(
-                      insxModel2: insxModel2s[index],
+                      insxModel2: filterInsxModel2s[index],
                     ),
                   );
                   Navigator.push(context, route);
@@ -213,14 +218,14 @@ class _InsxPageState extends State<InsxPage> {
                         color: colorIcons[index],
                       ),
                       title: Text(
-                        insxModel2s[index].cus_name,
+                        filterInsxModel2s[index].cus_name,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       subtitle: Text(
-                        '${insxModel2s[index].write_id} \n${insxModel2s[index].pea_no} ',
+                        'สาย : ${filterInsxModel2s[index].write_id} \nPEA : ${filterInsxModel2s[index].pea_no} ',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
@@ -231,6 +236,40 @@ class _InsxPageState extends State<InsxPage> {
           ],
         ),
       );
+
+  Widget searchText() {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 250,
+            child: TextField(
+              decoration: InputDecoration(hintText: 'กรอกชื่อ'),
+              onChanged: (value) {
+                debouncer.run(() {
+                  setState(() {
+                    filterInsxModel2s = insxModel2s
+                        .where((u) => u.cus_name
+                            .toLowerCase()
+                            .contains(value.toLowerCase()))
+                        .toList();
+                  });
+                });
+              },
+            ),
+          ),
+          IconButton(
+              icon: Icon(
+                Icons.search,
+                size: 36,
+              ),
+              onPressed: () {}),
+        ],
+      ),
+    );
+  }
 
   Future<Null> chooseCamera(int index) async {
     try {
@@ -282,5 +321,20 @@ class _InsxPageState extends State<InsxPage> {
         normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
       }
     });
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback action;
+  Timer _timer;
+
+  Debouncer({this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

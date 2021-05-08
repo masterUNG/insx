@@ -36,12 +36,12 @@ class _HomePageState extends State<HomePage> {
 
   Future<Null> findUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+
     setState(() {
       nameUser = preferences.getString('staffname');
       userEmail = preferences.getString('user_email');
       userImge = preferences.getString('user_img');
       userId = preferences.getString('id');
-
     });
     print('nameUser ==== $nameUser');
     print('userImage === $userImge');
@@ -76,9 +76,18 @@ class _HomePageState extends State<HomePage> {
             fit: BoxFit.cover,
           ),
         ),
-        currentAccountPicture: CircularProfileAvatar(
-          '$userImge',
-          borderWidth: 4.0,
+        currentAccountPicture: GestureDetector(
+          // onTap: () {
+          //   MaterialPageRoute materialPageRoute = MaterialPageRoute(
+          //     builder: (context) => AddInformationUser(),
+          //   );
+          //   Navigator.push(context, materialPageRoute)
+          //       .then((value) => findUser());
+          // },
+          child: CircularProfileAvatar(
+            '$userImge',
+            borderWidth: 4.0,
+          ),
         ),
         accountName: Text('$nameUser'),
         accountEmail: Text('$userEmail'),
@@ -86,7 +95,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -164,15 +172,13 @@ class _HomePageState extends State<HomePage> {
         preferredSize: Size.fromHeight(100.0),
         child: AppBar(
           toolbarHeight: 100,
-     
           title: Center(
             child: Text(
               'บริษัท สดุดียี่สิบสาม จำกัด',
-              //nameUser == null ? 'User' : '$nameUser login',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 3,
+                letterSpacing: 2,
               ),
             ),
           ),

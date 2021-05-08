@@ -3,7 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:psinsx/pages/check_login.dart';
 
 void main() {
-  
+   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+ ));
+
   runApp(MyApp());
 }
 
@@ -19,9 +22,9 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.red[900],
           accentColor: Colors.redAccent,
           textTheme: TextTheme(
-            headline: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
-            title: TextStyle(fontSize: 36, fontStyle: FontStyle.italic),
-            body1: TextStyle(fontSize: 18),
+            headline5: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
+            headline6: TextStyle(fontSize: 36, fontStyle: FontStyle.italic),
+            bodyText2: TextStyle(fontSize: 18),
           )),
       home: CheckLogin(),
       debugShowCheckedModeBanner: false,

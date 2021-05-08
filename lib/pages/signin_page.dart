@@ -6,6 +6,9 @@ import 'package:psinsx/models/user_model.dart';
 import 'package:psinsx/pages/home_page.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+
+
 
 class SignIn extends StatefulWidget {
   @override
@@ -15,13 +18,18 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   //Field
   String user, password;
+  
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
+      //resizeToAvoidBottomPadding: false,
+      
       body: SingleChildScrollView(
         child: Center(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(height: 30),
@@ -33,6 +41,7 @@ class _SignInState extends State<SignIn> {
               _passwordForm(),
               SizedBox(height: 20),
               _loginButton(),
+               SizedBox(height: 200),
             ],
           ),
         ),
@@ -42,7 +51,7 @@ class _SignInState extends State<SignIn> {
 
   Widget _loginButton() => Container(
         width: 250,
-        child: RaisedButton(
+        child: MaterialButton(
           color: Colors.red[900],
           onPressed: () {
             
@@ -50,6 +59,7 @@ class _SignInState extends State<SignIn> {
                 user.isEmpty ||
                 password == null ||
                 password.isEmpty) {
+                  normalDialog(context, 'กรุณากรอก User & Password');
             } else {
               checkAuthen();
             }
@@ -64,15 +74,16 @@ class _SignInState extends State<SignIn> {
       );
 
   Future<Null> checkAuthen() async {
+
     String url =
         'https://pea23.com/apipsinsx/getUserWhereUserSinghto.php?isAdd=true&username=$user';
     try {
       Response response = await Dio().get(url);
-      print('res ===== $response');
+      //print('res ===== $response');
 
       var result = json.decode(response.data);
 
-      print('result $result');
+      //print('result $result');
 
       for (var map in result) {
         UserModel userModel = UserModel.fromJson(map);
@@ -91,6 +102,8 @@ class _SignInState extends State<SignIn> {
     preferences.setString('staffname', userModel.staffname);
     preferences.setString('user_email', userModel.userEmail);
     preferences.setString('user_img', userModel.userImg);
+
+    
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => myWidget,
     );
@@ -99,7 +112,7 @@ class _SignInState extends State<SignIn> {
 
   Widget _userForm() => Container(
         width: 250,
-        child: TextField(
+        child: TextFormField(
           onChanged: (value) => user = value.trim(),
           decoration: InputDecoration(
             prefixIcon: Icon(
@@ -118,7 +131,7 @@ class _SignInState extends State<SignIn> {
 
   Widget _passwordForm() => Container(
         width: 250,
-        child: TextField(
+        child: TextFormField(
           onChanged: (value) => password = value.trim(),
           obscureText: true,
           decoration: InputDecoration(
@@ -137,22 +150,18 @@ class _SignInState extends State<SignIn> {
       );
 
   Text _showNameApp() => Text(
-        'psINSx',
+        'PSINSx',
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.red[900],
-          letterSpacing: 2,
+          letterSpacing: 3,
         ),
       );
 
   Container _showLogo() {
     return Container(
-      child: Icon(
-        Icons.notification_important,
-        size: 80,
-        color: Colors.red,
-      ),
+      child: Image.asset('assets/images/logo.png',height: 100,)
     );
   }
 }
