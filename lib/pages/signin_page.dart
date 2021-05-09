@@ -79,7 +79,7 @@ class _SignInState extends State<SignIn> {
         'https://pea23.com/apipsinsx/getUserWhereUserSinghto.php?isAdd=true&username=$user';
     try {
       Response response = await Dio().get(url);
-      //print('res ===== $response');
+      print('res ===== $response');
 
       var result = json.decode(response.data);
 

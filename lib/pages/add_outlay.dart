@@ -9,6 +9,7 @@ import 'package:psinsx/models/sub_model.dart';
 import 'package:psinsx/models/user_model.dart';
 import 'package:psinsx/pages/dashbord.dart';
 import 'package:psinsx/pages/home_page.dart';
+import 'package:psinsx/pages/oil_page.dart';
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -197,7 +198,6 @@ class _AddOutLayState extends State<AddOutLay> {
 
         String urlInsertData =
             'https://pea23.com/apipsinsx/addDataOutlay.php?isAdd=true&costType_id=1&supplier_name=$supplierName&supplier_address=$supplierAddress&supplier_taxid=$supplierTaxid&orderFrom_id=1&branch=$branch&user_id=$userId&details=$details&number=$number&priceUnit=$priceUnit&sum=$sum&tax=$tax&referenceNumber=$referenceNumber&image=$urlPathImage&createdAt=$createDate&outlay_status=NO&create_by=$userId&create_date=$createDate';
-
         await Dio().get(urlInsertData);
         showToast('อัพโหลดสำเร็จ', gravity: Toast.CENTER);
         routeTuService();
@@ -209,7 +209,7 @@ class _AddOutLayState extends State<AddOutLay> {
    Future<Null> routeTuService() async {
    
     MaterialPageRoute route = MaterialPageRoute(
-      builder: (context) => HomePage(),
+      builder: (context) => OilPage(),
     );
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }

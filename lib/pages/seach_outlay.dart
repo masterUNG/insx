@@ -44,7 +44,7 @@ class _SeachOutlayState extends State<SeachOutlay> {
       print('result ====>>> $result');
       for (var map in result) {
         SubModel subModel = SubModel.fromJson(map);
-        //print('name ====>>> ${subModel.ca}');
+        print('name ====>>> ${subModel.supplierTaxid}');
         setState(() {
           subModels.add(subModel);
         });
@@ -89,7 +89,7 @@ class _SeachOutlayState extends State<SeachOutlay> {
             child: TextField(
               autofocus: true,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(hintText: 'กรอก ca'),
+              decoration: InputDecoration(hintText: 'กรอกเลขภาษี'),
               onChanged: (value) => search = value.trim(),
             ),
           ),

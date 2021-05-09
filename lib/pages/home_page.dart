@@ -1,5 +1,6 @@
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:psinsx/pages/add_information_user.dart';
 import 'package:psinsx/pages/dashbord.dart';
 import 'package:psinsx/pages/help_page.dart';
 import 'package:psinsx/pages/information_user.dart';
@@ -43,19 +44,13 @@ class _HomePageState extends State<HomePage> {
       userImge = preferences.getString('user_img');
       userId = preferences.getString('id');
     });
-    print('nameUser ==== $nameUser');
-    print('userImage === $userImge');
+    //print('nameUser ==== $nameUser');
+    //print('userImage === $userImge');
     //print('userId === $userId');
-    print('userEmail === $userEmail');
+    //print('userEmail === $userEmail');
   }
 
-  Future<Null> signOutProcess() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.clear();
-    //exit(0);
-    MaterialPageRoute route = MaterialPageRoute(builder: (context) => SignIn());
-    Navigator.pushAndRemoveUntil(context, route, (route) => false);
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +72,13 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         currentAccountPicture: GestureDetector(
-          // onTap: () {
-          //   MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          //     builder: (context) => AddInformationUser(),
-          //   );
-          //   Navigator.push(context, materialPageRoute)
-          //       .then((value) => findUser());
-          // },
+          onTap: () {
+            MaterialPageRoute materialPageRoute = MaterialPageRoute(
+              builder: (context) => AddInformationUser(),
+            );
+            Navigator.push(context, materialPageRoute)
+                .then((value) => findUser());
+          },
           child: CircularProfileAvatar(
             '$userImge',
             borderWidth: 4.0,

@@ -51,7 +51,7 @@ class _DashbordState extends State<Dashbord> {
                   showSearchDataLocation(context),
                   showReport(),
                   showDocuments(),
-                  showValueOil(),
+                  //showValueOil(),
                 ],
               ),
             ),
@@ -139,7 +139,7 @@ class _DashbordState extends State<Dashbord> {
                 color: Colors.red,
               ),
               Text(
-                'งานประจำวัน',
+                'รายงานวันนี้',
                 style: TextStyle(fontSize: 18, color: Colors.grey[800]),
               )
             ],
