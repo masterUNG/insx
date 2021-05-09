@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:psinsx/pages/check_login.dart';
+import 'package:psinsx/pages/home_page.dart';
+import 'package:psinsx/pages/signin_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
- ));
+final Map<String, WidgetBuilder> map = {
+  '/homePage': (BuildContext context) => HomePage(),
+  '/signIn': (BuildContext context) => SignIn(),
+};
 
-  runApp(MyApp());
+String initialRount;
+
+Future<Null> main()async {
+ WidgetsFlutterBinding.ensureInitialized();
+ SharedPreferences preferences = await SharedPreferences.getInstance();
+ String string = preferences.getString('id');
+ if (string?.isEmpty??true) {
+   initialRount = '/signIn';
+   runApp(MyApp());
+ } else {
+    initialRount = '/homePage';
+   runApp(MyApp());
+ }
 }
 
 class MyApp extends StatelessWidget {
@@ -26,8 +40,9 @@ class MyApp extends StatelessWidget {
             headline6: TextStyle(fontSize: 36, fontStyle: FontStyle.italic),
             bodyText2: TextStyle(fontSize: 18),
           )),
-      home: CheckLogin(),
       debugShowCheckedModeBanner: false,
+      routes: map,
+      initialRoute: initialRount,
     );
   }
 }

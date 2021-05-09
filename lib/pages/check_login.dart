@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:psinsx/pages/signin_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
 
 import 'home_page.dart';
 
@@ -17,7 +16,7 @@ class _CheckLoginState extends State<CheckLogin> {
   void initState() {
     super.initState();
   
-    checkPreferance();
+    //checkPreferance();
   }
 
   Future<Null> checkPreferance() async {
@@ -44,6 +43,7 @@ class _CheckLoginState extends State<CheckLogin> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //MyStyle().showLogo(),
+          Text('test Master')
         ],
       ),
     );

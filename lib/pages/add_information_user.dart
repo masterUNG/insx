@@ -128,8 +128,8 @@ class _AddInformationUserState extends State<AddInformationUser> {
   Widget editButton() {
     return Container(
       width: 300,
-      child: RaisedButton.icon(
-        color: Colors.red,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(primary: Colors.red),
         onPressed: () => confirmDialog(),
         icon: Icon(
           Icons.save,
@@ -200,32 +200,45 @@ class _AddInformationUserState extends State<AddInformationUser> {
   }
 
   Future<Null> editThread() async {
-    Random random = Random();
-    int i = random.nextInt(100000);
-    String nameFile = 'staff$i.jpg';
-
-    Map<String, dynamic> map = Map();
-    map['file'] = await MultipartFile.fromFile(file.path, filename: nameFile);
-    FormData formData = FormData.fromMap(map);
-
-    String urlUpload = '${MyConstant().domain}/apipsinsx/saveFile.php';
-    await Dio().post(urlUpload, data: formData).then((value) async {
-      userImg = '${MyConstant().domain}/apipsinsx/upload/$nameFile';
-
-      String id = userModel.userId;
-
-      String url =
-          'https://pea23.com/apipsinsx/editUserWhereId.php?isAdd=true&user_id=$id&user_email=$userEmail &user_phone=$userPhone&user_adress=$userAddress&user_bank_name=$userBankName&user_bank_number=$userBankNumber&user_img=$userImg';
-
-      Response response = await Dio().get(url);
-
-      if (response.toString() == 'true') {
+    if (file != null) {
+      Random random = Random();
+      int i = random.nextInt(100000);
+      String nameFile = 'staff$i.jpg';
       
-        Navigator.pop(context);
-      } else {
-        normalDialog(context, 'อัพเดทไม่ได้ กรุณาลองใหม่');
-      }
-    });
+      Map<String, dynamic> map = Map();
+      map['file'] = await MultipartFile.fromFile(file.path, filename: nameFile);
+      FormData formData = FormData.fromMap(map);
+      
+      String urlUpload = '${MyConstant().domain}/apipsinsx/saveFile.php';
+      await Dio().post(urlUpload, data: formData).then((value) async {
+        userImg = '${MyConstant().domain}/apipsinsx/upload/$nameFile';
+      
+        await processEditDatabase();
+      });
+    }else{
+      await processEditDatabase();
+    }
+  }
+
+  Future processEditDatabase() async {
+    String id = userModel.userId;
+    
+    String url =
+        'https://pea23.com/apipsinsx/editUserWhereId.php?isAdd=true&user_id=$id&user_email=$userEmail &user_phone=$userPhone&user_adress=$userAddress&user_bank_name=$userBankName&user_bank_number=$userBankNumber&user_img=$userImg';
+    
+    Response response = await Dio().get(url);
+    
+    if (response.toString() == 'true') {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setString('id', userModel.userId);
+      preferences.setString('staffname', userModel.staffname);
+      preferences.setString('user_email', userModel.userEmail);
+      preferences.setString('user_img', userModel.userImg);
+    
+      Navigator.pop(context);
+    } else {
+      normalDialog(context, 'อัพเดทไม่ได้ กรุณาลองใหม่');
+    }
   }
 
   Widget showImage() {

@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:psinsx/models/insx_model2.dart';
 import 'package:psinsx/pages/insx_edit.dart';
+import 'package:psinsx/utility/my_style.dart';
+import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MapInsx extends StatefulWidget {
@@ -19,12 +22,71 @@ class MapInsx extends StatefulWidget {
 class _MapInsxState extends State<MapInsx> {
   List<InsxModel2> insxModel2s;
 
-  LatLng startMapLatLng = LatLng(16.753188, 101.203616);
+  LatLng startMapLatLng;
+  double lat, lng;
 
   @override
   void initState() {
     super.initState();
     insxModel2s = widget.insxModel2s;
+    findLatLng();
+  }
+
+  Future<Null> findLatLng() async {
+    bool enableServiceLocation = await Geolocator.isLocationServiceEnabled();
+
+    if (enableServiceLocation) {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          lat = 16.753188;
+          lng = 101.203616;
+        });
+      } else if (permission == LocationPermission.denied) {
+        await Geolocator.requestPermission().then((value) async {
+          if (value == LocationPermission.deniedForever) {
+            setState(() {
+              lat = 16.753188;
+              lng = 101.203616;
+            });
+            startMapLatLng = LatLng(16.753188, 101.203616);
+          } else {
+            // find Lat, lng
+            var position = await findPosition();
+            setState(() {
+              lat = position.latitude;
+              lng = position.longitude;
+              startMapLatLng = LatLng(lat, lng);
+            });
+          }
+        });
+      } else {
+        // find Lat, lng
+        var position = await findPosition();
+        setState(() {
+          lat = position.latitude;
+          lng = position.longitude;
+          startMapLatLng = LatLng(lat, lng);
+        });
+      }
+    } else {
+      normalDialog(context, 'โปรดให้สิทธิแผนที่ก่อน');
+      setState(() {
+        lat = 16.753188;
+        lng = 101.203616;
+        startMapLatLng = LatLng(16.753188, 101.203616);
+      });
+    }
+  }
+
+  Future<Position> findPosition() async {
+    Position position;
+    try {
+      position = await Geolocator.getCurrentPosition();
+      return position;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<Null> myReadAPI() async {
@@ -49,8 +111,16 @@ class _MapInsxState extends State<MapInsx> {
   }
 
   Set<Marker> myAllMarker() {
-    List<Marker> markers = List();
+    List<Marker> markers = [];
     List<double> hues = [80.0, 60.0, 150.0, 20.0];
+
+    Marker userMarker = Marker(
+        markerId: MarkerId('idUser'),
+        position: LatLng(lat, lng),
+        infoWindow: InfoWindow(title: 'คุณอยู่ที่นี่'), icon: BitmapDescriptor.defaultMarkerWithHue(300));
+
+    markers.add(userMarker);
+
     for (var item in insxModel2s) {
       Marker marker = Marker(
         icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -122,7 +192,11 @@ class _MapInsxState extends State<MapInsx> {
           ),
         ),
       ),
-      body: insxModel2s.length == 0 ? buildSecondMap() : buildMainMap(),
+      body: lat == null
+          ? MyStyle().showProgress()
+          : insxModel2s.length == 0
+              ? buildSecondMap()
+              : buildMainMap(),
       // floatingActionButton: FloatingActionButton(
       //   backgroundColor: Colors.purple,
       //   onPressed: () async {
@@ -144,7 +218,7 @@ class _MapInsxState extends State<MapInsx> {
     return GoogleMap(
       initialCameraPosition: CameraPosition(
         target: startMapLatLng,
-        zoom: 6,
+        zoom: 8,
       ),
       mapType: MapType.normal,
       onMapCreated: (controller) => {},

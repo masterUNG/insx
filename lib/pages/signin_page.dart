@@ -22,27 +22,29 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    //SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       //resizeToAvoidBottomPadding: false,
       
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 30),
-              _showLogo(),
-              _showNameApp(),
-              SizedBox(height: 30),
-              _userForm(),
-              SizedBox(height: 20),
-              _passwordForm(),
-              SizedBox(height: 20),
-              _loginButton(),
-               SizedBox(height: 200),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                //SizedBox(height: 30),
+                _showLogo(),
+                _showNameApp(),
+                SizedBox(height: 20),
+                _userForm(),
+                SizedBox(height: 20),
+                _passwordForm(),
+                SizedBox(height: 20),
+                _loginButton(),
+                 SizedBox(height: 300),
+              ],
+            ),
           ),
         ),
       ),

@@ -68,7 +68,15 @@ class UserModel {
     userAdress = json['user_adress'];
     userBankName = json['user_bank_name'];
     userBankNumber = json['user_bank_number'];
-    userImg = json['user_img'];
+    userImg = checkNull(json['user_img']);
+  }
+
+  String checkNull(String string){
+    String result = string;
+    if (result == null) {
+      result = '';
+    }
+    return result;
   }
 
   Map<String, dynamic> toJson() {

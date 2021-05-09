@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:psinsx/models/user_model.dart';
 import 'package:psinsx/pages/add_information_user.dart';
 import 'package:psinsx/pages/dashbord.dart';
 import 'package:psinsx/pages/help_page.dart';
 import 'package:psinsx/pages/information_user.dart';
 import 'package:psinsx/pages/insx_page.dart';
 import 'package:psinsx/pages/signin_page.dart';
+import 'package:psinsx/utility/my_api.dart';
+import 'package:psinsx/utility/my_constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,6 +29,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget currentWidget = Dashbord();
 
+  UserModel userModel;
+
   @override
   void initState() {
     super.initState();
@@ -32,10 +40,38 @@ class _HomePageState extends State<HomePage> {
         currentWidget = InsxPage();
       }
     }
-    findUser();
+
+    //findUser();
+    readUserInfo();
   }
 
+  Future<Null> readUserInfo() async {
+
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  String userId = preferences.getString('id');
+  String url =
+      '${MyConstant().domain}/apipsinsx/getUserWhereId.php?isAdd=true&user_id=$userId';
+  await Dio().get(url).then((value) {
+    var result = json.decode(value.data);
+    print('result === $result');
+
+    for (var map in result) {
+      setState(() {
+        userModel = UserModel.fromJson(map);
+
+        nameUser = userModel.staffname;
+        userEmail = userModel.userEmail;
+        userImge = userModel.userImg;
+        userId = userModel.userId;
+
+      });
+    }
+  });
+}
+
   Future<Null> findUser() async {
+  
+
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     setState(() {
@@ -45,12 +81,36 @@ class _HomePageState extends State<HomePage> {
       userId = preferences.getString('id');
     });
     //print('nameUser ==== $nameUser');
-    //print('userImage === $userImge');
+    print('######userImage === $userImge');
     //print('userId === $userId');
     //print('userEmail === $userEmail');
   }
 
-
+  Widget showDrawerHeader() {
+    return UserAccountsDrawerHeader(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/bird.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      currentAccountPicture: GestureDetector(
+        onTap: () {
+          MaterialPageRoute materialPageRoute = MaterialPageRoute(
+            builder: (context) => AddInformationUser(),
+          );
+          Navigator.push(context, materialPageRoute)
+              .then((value) => readUserInfo());
+        },
+        child: CircularProfileAvatar(
+          '$userImge',
+          borderWidth: 4.0,
+        ),
+      ),
+      accountName: Text('$nameUser'),
+      accountEmail: Text('$userEmail'),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,32 +121,6 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute route =
           MaterialPageRoute(builder: (context) => SignIn());
       Navigator.pushAndRemoveUntil(context, route, (route) => false);
-    }
-
-    Widget showDrawerHeader() {
-      return UserAccountsDrawerHeader(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/bird.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        currentAccountPicture: GestureDetector(
-          onTap: () {
-            MaterialPageRoute materialPageRoute = MaterialPageRoute(
-              builder: (context) => AddInformationUser(),
-            );
-            Navigator.push(context, materialPageRoute)
-                .then((value) => findUser());
-          },
-          child: CircularProfileAvatar(
-            '$userImge',
-            borderWidth: 4.0,
-          ),
-        ),
-        accountName: Text('$nameUser'),
-        accountEmail: Text('$userEmail'),
-      );
     }
 
     return Scaffold(
