@@ -143,20 +143,20 @@ class _HomePageState extends State<HomePage> {
                   });
                   Navigator.pop(context);
                 }),
-            ListTile(
-                leading: Icon(Icons.image_search),
-                title: Text('INSx'),
-                subtitle: Text(
-                  'งานแจ้งเตือน',
-                  style: TextStyle(fontSize: 8),
-                ),
-                trailing: Icon(Icons.arrow_right),
-                onTap: () {
-                  setState(() {
-                    currentWidget = InsxPage();
-                  });
-                  Navigator.pop(context);
-                }),
+            // ListTile(
+            //     leading: Icon(Icons.image_search),
+            //     title: Text('INSx'),
+            //     subtitle: Text(
+            //       'งานแจ้งเตือน',
+            //       style: TextStyle(fontSize: 8),
+            //     ),
+            //     trailing: Icon(Icons.arrow_right),
+            //     onTap: () {
+            //       setState(() {
+            //         currentWidget = InsxPage();
+            //       });
+            //       Navigator.pop(context);
+            //     }),
             ListTile(
                 leading: Icon(Icons.person_pin),
                 title: Text('Information'),

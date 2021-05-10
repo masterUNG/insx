@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:psinsx/pages/home_page.dart';
+import 'package:psinsx/pages/insx_page.dart';
 import 'package:psinsx/pages/signin_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final Map<String, WidgetBuilder> map = {
   '/homePage': (BuildContext context) => HomePage(),
   '/signIn': (BuildContext context) => SignIn(),
+  '/insxPage': (BuildContext context) => InsxPage(),
 };
 
 String initialRount;

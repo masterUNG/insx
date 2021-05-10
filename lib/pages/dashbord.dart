@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:psinsx/pages/doc_page.dart';
+import 'package:psinsx/pages/insx_page.dart';
+import 'package:psinsx/pages/map.dart';
 import 'package:psinsx/pages/oil_page.dart';
 import 'package:psinsx/pages/report_page.dart';
 import 'package:psinsx/pages/search_page.dart';
@@ -32,36 +33,63 @@ class _DashbordState extends State<Dashbord> {
 
   @override
   Widget build(BuildContext context) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
- ));
     return Scaffold(
-      body: Container(
-        child: CustomScrollView(
-          primary: false,
-          slivers: <Widget>[
-            SliverPadding(
-              padding: const EdgeInsets.all(20),
-              sliver: SliverGrid.count(
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                crossAxisCount: 2,
-                children: <Widget>[
-                  showLoadData(),
-                  showSearchDataLocation(context),
-                  showReport(),
-                  showDocuments(),
-                  //showValueOil(),
-                ],
-              ),
+      body: Stack(
+        children: [
+          MyMap(),
+          Positioned(
+            top: 10,
+            left: 10,
+            child: showLoadData(),
+          ),
+          Positioned(
+            top: 75,
+            left: 10,
+            child: showReport(),
+          ),
+          Positioned(
+            top: 140,
+            left: 10,
+            child: showSearchDataLocation(context),
+          ),
+
+        ],
+      ),
+      // floatingActionButton: FloatingActionButton(
+      //   elevation: 0.0,
+      //   onPressed: () => Navigator.pushNamed(context, '/insxPage'),
+      // ),
+    );
+  }
+
+  Container buildContent(BuildContext context) {
+    return Container(
+      child: CustomScrollView(
+        primary: false,
+        slivers: <Widget>[
+          SliverPadding(
+            padding: const EdgeInsets.all(20),
+            sliver: SliverGrid.count(
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              crossAxisCount: 2,
+              children: <Widget>[
+                //showLoadData(),
+                //showSearchDataLocation(context),
+                //showReport(),
+                //showDocuments(),
+                //showValueOil(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-    Widget showValueOil() {
+ 
+
+  Widget showValueOil() {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -109,13 +137,9 @@ class _DashbordState extends State<Dashbord> {
             children: [
               Icon(
                 Icons.dashboard_customize,
-                size: 80,
+                size: 40,
                 color: Colors.red,
               ),
-              Text(
-                'ผลดำเนินการ',
-                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
-              )
             ],
           ),
           color: Colors.red[100]),
@@ -135,13 +159,9 @@ class _DashbordState extends State<Dashbord> {
             children: [
               Icon(
                 Icons.receipt_outlined,
-                size: 80,
+                size: 40,
                 color: Colors.red,
               ),
-              Text(
-                'รายงานวันนี้',
-                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
-              )
             ],
           ),
           color: Colors.red[100]),
@@ -161,13 +181,9 @@ class _DashbordState extends State<Dashbord> {
             children: [
               Icon(
                 Icons.search,
-                size: 80,
+                size: 40,
                 color: Colors.red,
               ),
-              Text(
-                'ค้นหาพิกัด',
-                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
-              )
             ],
           ),
           color: Colors.red[100]),
@@ -180,17 +196,15 @@ class _DashbordState extends State<Dashbord> {
       child: Container(
           padding: const EdgeInsets.all(8),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.download_sharp,
-                size: 80,
+                size: 40,
                 color: Colors.red,
               ),
-              Text(
-                'ดึงข้อมูล',
-                style: TextStyle(fontSize: 18, color: Colors.grey[800]),
-              )
+           
             ],
           ),
           color: Colors.red[100]),

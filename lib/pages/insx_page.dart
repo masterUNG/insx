@@ -85,21 +85,22 @@ class _InsxPageState extends State<InsxPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body:
           loadStatus ? Center(child: MyStyle().showProgress()) : showContent(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          MaterialPageRoute materialPageRoute = MaterialPageRoute(
-            builder: (context) => MapInsx(
-              insxModel2s: insxModel2s,
-            ),
-          );
-          Navigator.push(context, materialPageRoute).then(
-            (value) => readInsx(),
-          );
-        },
-        child: Icon(Icons.map_sharp),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     MaterialPageRoute materialPageRoute = MaterialPageRoute(
+      //       builder: (context) => MapInsx(
+      //         insxModel2s: insxModel2s,
+      //       ),
+      //     );
+      //     Navigator.push(context, materialPageRoute).then(
+      //       (value) => readInsx(),
+      //     );
+      //   },
+      //   child: Icon(Icons.map_sharp),
+      // ),
     );
   }
 
