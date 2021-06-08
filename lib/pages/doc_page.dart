@@ -27,6 +27,7 @@ class _DocPageState extends State<DocPage> {
   List<Color> colorIcons = List();
   List<File> files = List();
   String urlImage;
+   TextEditingController ctrReportDate = TextEditingController();
 
   @override
   void initState() {
@@ -111,89 +112,68 @@ class _DocPageState extends State<DocPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.0),
-        child: AppBar(
-          toolbarHeight: 100,
-          title: Text('ผลการตรวจสอบ'),
-        ),
+      appBar: AppBar(
+        title: Text('ผลการตรวจสอบ'),
       ),
       body:
-          loadStatus ? Center(child: MyStyle().showProgress()) : showContent(),
+          loadStatus ? Center(child: MyStyle().showProgress()) : showListInsx(),
     );
-  }
-
-  Widget showContent() {
-    return status
-        ? showListInsx()
-        : Container(
-            child: Center(
-              child: Text(
-                'No Data',
-                style: TextTheme().bodyText1,
-              ),
-            ),
-          );
   }
 
   Widget showListInsx() => SingleChildScrollView(
         child: Column(
           children: [
+
+            Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.all(10),
+            child: Text('สรุปผลการตรวจสอบประจำวัน',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+
+   Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: TextFormField(
+            controller: ctrReportDate,
+            readOnly: true,
+            decoration: InputDecoration(
+                labelText: 'ข้อมูล ณ วันที่',
+                hintText: 'dd/mm/yyyy',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.calendar_today),
+                  onPressed: () async {
+                    DateTime selectedDate = await showDatePicker(
+                        context: (context),
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now().subtract(Duration(days: 30)),
+                        lastDate: DateTime.now(),
+                        builder: (context, child) {
+                          return Theme(
+                            child: child,
+                            data: ThemeData.light().copyWith(
+                                accentColor: Colors.red[600],
+                                colorScheme: ColorScheme.light(
+                                  primary: Colors.red,
+                                ),
+                                buttonTheme: ButtonThemeData(
+                                    textTheme: ButtonTextTheme.primary)),
+                          );
+                        });
+
+                
+                  },
+                )),
+          ),
+        ),
             ListView.builder(
-              itemCount: getDateModels.length,
+              itemCount: 4,
               shrinkWrap: true,
-              itemBuilder: (context, index) =>
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Center(child: Text(getDateModels[index].getDatList)),
-                  ),
-            ),
-            Card(
-              child: ListTile(
-                title: Text(insxCheckModels.length == 0
-                    ? 'เสร็จสมบูรณ์ : ? รายการ'
-                    : 'เสร็จสมบูรณ์ : ${insxCheckModels.length} รายการ'),
-              ),
-            ),
-            ListView.builder(
-              itemCount: insxCheckModels.length,
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  MaterialPageRoute route = MaterialPageRoute(
-                    builder: (context) => InsxShowDataCheck(
-                      insxCheckModels: insxCheckModels[index],
-                    ),
-                  );
-                  Navigator.push(context, route);
-                },
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      // leading: Image.network(
-                      //   insxCheckModels[index].imageInsx,
-                      //   fit: BoxFit.cover,
-                      //   width: 50,
-                      //   height: 50,
-                      // ),
-                      leading: Icon(Icons.check),
-                      title: Text(
-                        insxCheckModels[index].ca,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Text(
-                        '${insxCheckModels[index].cusName} \n${insxCheckModels[index].imgDate} ',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              itemBuilder: (context, index) => Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: ListTile(
+                    leading: FlutterLogo(),
+                    title: Text('One-line with both widgets'),
+                    trailing: Icon(Icons.more_vert),
+                  )),
             ),
           ],
         ),

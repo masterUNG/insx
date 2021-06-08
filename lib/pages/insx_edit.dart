@@ -9,6 +9,7 @@ import 'package:psinsx/models/insx_model2.dart';
 import 'package:psinsx/pages/home_page.dart';
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
+import 'package:flutter/services.dart';
 
 class InsxEdit extends StatefulWidget {
   final InsxModel2 insxModel2;
@@ -49,9 +50,7 @@ class _InsxEditState extends State<InsxEdit> {
         child: AppBar(
           toolbarHeight: 100,
           title: Center(
-            child: Text(
-              'แก้ไขข้อมูล'
-            ),
+            child: Text('แก้ไขข้อมูล'),
           ),
         ),
       ),
@@ -97,7 +96,7 @@ class _InsxEditState extends State<InsxEdit> {
             child: Container(
               margin: EdgeInsets.only(top: 14),
               child: Text(
-                'พิกัดมือถือ:',
+                'พิกัดผู้ใช้ไฟ:',
                 style: TextStyle(fontSize: 14),
               ),
             ),
@@ -105,9 +104,17 @@ class _InsxEditState extends State<InsxEdit> {
           Expanded(
             child: Container(
               margin: EdgeInsets.only(top: 14),
-              child: Text(
-                '$lat, $lng',
-                style: TextStyle(fontSize: 12, color: Colors.red),
+              child: Row(
+                children: [
+                  Text(
+                    '${insxModel2.lat}, ${insxModel2.lng}',
+                    style: TextStyle(fontSize: 12, color: Colors.red),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  IconButton(icon: Icon(Icons.map), onPressed: () {})
+                ],
               ),
             ),
           ),
@@ -175,9 +182,21 @@ class _InsxEditState extends State<InsxEdit> {
           ),
           Container(
             margin: EdgeInsets.all(8),
-            child: Text(
-              '${insxModel2.pea_no}',
-              style: TextStyle(fontSize: 14),
+            child: Row(
+              children: [
+                Text(
+                  '${insxModel2.pea_no}',
+                  style: TextStyle(fontSize: 14),
+                ),
+                IconButton(
+                  icon: Icon(Icons.copy_outlined),
+                  onPressed: () {
+                    Clipboard.setData(
+                        ClipboardData(text: "GIS ${insxModel2.pea_no}"));
+                    print(insxModel2.pea_no);
+                  },
+                )
+              ],
             ),
           ),
         ],
@@ -190,7 +209,7 @@ class _InsxEditState extends State<InsxEdit> {
             padding: EdgeInsets.all(8.0),
             child: Container(
               child: Text(
-                'Line:',
+                'สายจดหน่วย:',
                 style: TextStyle(fontSize: 14),
               ),
             ),
@@ -340,8 +359,6 @@ class _InsxEditState extends State<InsxEdit> {
       map['file'] = await MultipartFile.fromFile(file.path, filename: fileName);
       FormData data = FormData.fromMap(map);
       await Dio().post(apiSaveFile, data: data).then((value) {
-        //print('====>>> $value');
-        //print('Success url Image ==>> https://pea23.com/apipsinsx/upload/$fileName');
         urlImage = '${MyConstant().domain}/apipsinsx/upload/$fileName';
         print('=== usrlImage == $urlImage');
         editDataInsx(insxModel2);
@@ -356,9 +373,7 @@ class _InsxEditState extends State<InsxEdit> {
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {
         MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          builder: (context) => HomePage(
-            statusINSx: true,
-          ),
+          builder: (context) => HomePage(),
         );
 
         print('fromMap === $fromMap');

@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:psinsx/models/insx_model.dart';
 import 'package:psinsx/models/insx_model2.dart';
 import 'package:psinsx/pages/insx_edit.dart';
-import 'package:psinsx/pages/map_insx.dart';
+
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/my_style.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
@@ -85,22 +85,8 @@ class _InsxPageState extends State<InsxPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body:
           loadStatus ? Center(child: MyStyle().showProgress()) : showContent(),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     MaterialPageRoute materialPageRoute = MaterialPageRoute(
-      //       builder: (context) => MapInsx(
-      //         insxModel2s: insxModel2s,
-      //       ),
-      //     );
-      //     Navigator.push(context, materialPageRoute).then(
-      //       (value) => readInsx(),
-      //     );
-      //   },
-      //   child: Icon(Icons.map_sharp),
-      // ),
     );
   }
 

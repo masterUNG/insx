@@ -76,13 +76,6 @@ class _ReportPageState extends State<ReportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.0),
-        child: AppBar(
-          toolbarHeight: 100,
-          title: Text('รายงานประจำวัน'),
-        ),
-      ),
       body:
           loadStatus ? Center(child: MyStyle().showProgress()) : showContent(),
     );
@@ -94,7 +87,7 @@ class _ReportPageState extends State<ReportPage> {
         : Container(
             child: Center(
               child: Text(
-                'No Data',
+                'ไม่พบข้อมูล',
                 style: TextTheme().bodyText1,
               ),
             ),

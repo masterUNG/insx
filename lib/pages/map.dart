@@ -194,11 +194,6 @@ class _MyMapState extends State<MyMap> {
       body: Stack(
         children: [
           insxModel2s.length == 0 ? buildSecondMap() : buildMainMap(),
-           Positioned(
-            top: 205,
-            left: 10,
-            child: workDay(),
-          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -263,7 +258,7 @@ class _MyMapState extends State<MyMap> {
         zoom: 8,
       ),
       onMapCreated: (controller) {},
-      //markers: myAllMarker(),
+      markers: myAllMarker(),
       myLocationButtonEnabled: true,
       myLocationEnabled: true,
     );

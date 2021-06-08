@@ -41,6 +41,8 @@ dependencies:
   datetime_picker_formfield: ^2.0.0
   toast: ^0.1.5
   geolocator: ^6.1.13
+  responsive_grid: ^1.2.0
+  cached_network_image: ^2.5.1
 
 flutter_icons:
   android: true

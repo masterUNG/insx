@@ -50,8 +50,10 @@ class _InformationUserState extends State<InformationUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('ข้อมูลพนักงาน'),
+      ),
       body: Container(
-        //height: 500,
         child: Stack(
           children: [
             userModel == null
