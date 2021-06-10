@@ -1,19 +1,17 @@
-import 'dart:convert';
-
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
-import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
 import 'package:psinsx/models/user_model.dart';
 import 'package:psinsx/pages/add_information_user.dart';
-import 'package:psinsx/pages/dashbord.dart';
-import 'package:psinsx/pages/doc_page.dart';
+
 import 'package:psinsx/pages/help_page.dart';
 import 'package:psinsx/pages/information_user.dart';
 import 'package:psinsx/pages/insx_page.dart';
+import 'package:psinsx/pages/map.dart';
 import 'package:psinsx/pages/report_page.dart';
 import 'package:psinsx/pages/search_page.dart';
 import 'package:psinsx/pages/signin_page.dart';
-import 'package:psinsx/utility/my_constant.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -30,22 +28,22 @@ class _HomePageState extends State<HomePage> {
   String nameUser, userEmail, userImge, userId;
   bool status;
 
-  Widget currentWidget = Dashbord();
+  Widget currentWidget = MyMap();
   int selectedIndex = 0;
 
-  List pages = [Dashbord(), InsxPage(), SearchPage(), ReportPage()];
+  List pages = [MyMap(), InsxPage(), SearchPage(), ReportPage()];
 
   UserModel userModel;
 
   @override
   void initState() {
     super.initState();
-    status = widget.statusINSx;
-    if (status != null) {
-      if (status) {
-        currentWidget = InsxPage();
-      }
-    }
+    // status = widget.statusINSx;
+    // if (status != null) {
+    //   if (status) {
+    //     currentWidget = InsxPage();
+    //   }
+    // }
 
     //findUser();
     readUserInfo();
@@ -53,24 +51,30 @@ class _HomePageState extends State<HomePage> {
 
   Future<Null> readUserInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userId = preferences.getString('id');
-    String url =
-        '${MyConstant().domain}/apipsinsx/getUserWhereId.php?isAdd=true&user_id=$userId';
-    await Dio().get(url).then((value) {
-      var result = json.decode(value.data);
-      print('result === $result');
+    //String userId = preferences.getString('id');
 
-      for (var map in result) {
-        setState(() {
-          userModel = UserModel.fromJson(map);
+    nameUser = preferences.getString('staffname');
+    userEmail = preferences.getString('user_email');
+    userImge = preferences.getString('user_img');
+    userId = preferences.getString('id');
 
-          nameUser = userModel.staffname;
-          userEmail = userModel.userEmail;
-          userImge = userModel.userImg;
-          userId = userModel.userId;
-        });
-      }
-    });
+    // String url =
+    //     '${MyConstant().domain}/apipsinsx/getUserWhereId.php?isAdd=true&user_id=$userId';
+    // await Dio().get(url).then((value) {
+    //   var result = json.decode(value.data);
+    //   print('result === $result');
+
+    //   for (var map in result) {
+    //     setState(() {
+    //       userModel = UserModel.fromJson(map);
+
+    //       nameUser = userModel.staffname;
+    //       userEmail = userModel.userEmail;
+    //       userImge = userModel.userImg;
+    //       userId = userModel.userId;
+    //     });
+    //   }
+    // });
   }
 
   Widget showDrawerHeader() {
@@ -107,7 +111,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
 
-   Future<Null> launchURL() async {
+  Future<Null> launchURL() async {
     const url = 'https://pea23.com';
     if (await canLaunch(url)) {
       await launch(url);
@@ -137,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => InformationUser()));
                 }),
-                  ListTile(
+            ListTile(
                 leading: Icon(Icons.whatshot_rounded),
                 title: Text('Web'),
                 subtitle: Text(

@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:psinsx/models/insx_model2.dart';
+import 'package:psinsx/models/insx_sqlite_model.dart';
 import 'package:psinsx/pages/insx_edit.dart';
 import 'package:psinsx/pages/insx_page.dart';
+import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/my_style.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
+import 'package:psinsx/utility/sqlite_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyMap extends StatefulWidget {
@@ -24,12 +27,78 @@ class _MyMapState extends State<MyMap> {
   @override
   void initState() {
     super.initState();
-    findLatLng();
+    checkSQLit();
+
+    //checkSQLit();
+  }
+
+  bool checkSQLite2() {
+
+    print('########### statusSQLite ######### $statusSQLite');
+    return statusSQLite;
+  }
+
+  bool statusSQLite;
+
+  Future<Null> checkSQLit() async {
+    List<InsxSQLiteModel> insxSQLiteModels = await SQLiteHelper().readSQLite();
+    if (insxSQLiteModels.length == 0) {
+      // read from api
+      statusSQLite = true;
+      findLatLng();
+    } else {
+      statusSQLite = false;
+      findLatLng();
+    }
+  }
+
+  Future<Null> readSQLiteData() async {
+    print('>>>>>>>>>>>>>>>>>>33333reade word');
+    insxModel2s.clear();
+
+    await SQLiteHelper().readSQLite().then((value) {
+      setState(() {
+        List<InsxSQLiteModel> insxSQLiteModels = value;
+        for (var model2 in insxSQLiteModels) {
+          InsxModel2 insxModel2 = InsxModel2(
+            id: model2.id.toString(),
+            ca: model2.ca,
+            pea_no: model2.pea_no,
+            cus_name: model2.cus_name,
+            cus_id: model2.cus_id,
+            invoice_no: model2.invoice_no,
+            bill_date: model2.bill_date,
+            bp_no: model2.bp_no,
+            write_id: model2.write_id,
+            portion: model2.portion,
+            ptc_no: model2.ptc_no,
+            address: model2.address,
+            new_period_date: model2.new_period_date,
+            write_date: model2.write_date,
+            lat: model2.lat,
+            lng: model2.lng,
+            invoice_status: model2.invoice_status,
+            noti_date: model2.noti_date,
+            update_date: model2.update_date,
+            timestamp: model2.timestamp,
+            workImage: model2.workImage,
+            worker_code: model2.worker_code,
+            worker_name: model2.worker_name,
+          );
+
+          setState(() {
+           insxModel2s.add(insxModel2);
+          });
+        }
+      });
+    });
   }
 
   Future<Null> myReadAPI() async {
-    //print('myReadAPI work ===:>>>');
+    print('>>>>>>>>>>>>>>>>>>My Read API Workd');
+
     insxModel2s.clear();
+    await SQLiteHelper().deleteAllData();
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String workername = preferences.getString('staffname');
@@ -37,11 +106,39 @@ class _MyMapState extends State<MyMap> {
     String url =
         'https://pea23.com/apipsinsx/getInsxWhereUser.php?isAdd=true&worker_name=$workername';
 
-    await Dio().get(url).then((value) {
+    await Dio().get(url).then((value) async {
       if (value.toString() != 'null') {
         for (var item in json.decode(value.data)) {
           InsxModel2 model2 = InsxModel2.fromMap(item);
           insxModel2s.add(model2);
+
+          // InsxSQLiteModel insxSQLiteModel = InsxSQLiteModel.fromMap(item);
+          InsxSQLiteModel insxSQLiteModel = InsxSQLiteModel(
+            ca: model2.ca,
+            pea_no: model2.pea_no,
+            cus_name: model2.cus_name,
+            cus_id: model2.cus_id,
+            invoice_no: model2.invoice_no,
+            bill_date: model2.bill_date,
+            bp_no: model2.bp_no,
+            write_id: model2.write_id,
+            portion: model2.portion,
+            ptc_no: model2.ptc_no,
+            address: model2.address,
+            new_period_date: model2.new_period_date,
+            write_date: model2.write_date,
+            lat: model2.lat,
+            lng: model2.lng,
+            invoice_status: model2.invoice_status,
+            noti_date: model2.noti_date,
+            update_date: model2.update_date,
+            timestamp: model2.timestamp,
+            workImage: model2.workImage,
+            worker_code: model2.worker_code,
+            worker_name: model2.worker_name,
+          );
+
+          await SQLiteHelper().insertValueToSQLite(insxSQLiteModel);
         }
         setState(() {
           myAllMarker();
@@ -83,7 +180,11 @@ class _MyMapState extends State<MyMap> {
             Navigator.push(context, route).then(
               (value) {
                 //print('Back Form insx');
-                myReadAPI();
+                if (checkSQLite2()) {
+                  myReadAPI();
+                } else {
+                  readSQLiteData();
+                }
               },
             );
           },
@@ -129,7 +230,11 @@ class _MyMapState extends State<MyMap> {
           lat = 16.753188;
           lng = 101.203616;
           startMapLatLng = LatLng(16.753188, 101.203616);
-          myReadAPI();
+          if (checkSQLite2()) {
+            myReadAPI();
+          } else {
+            readSQLiteData();
+          }
         });
       } else if (permission == LocationPermission.denied) {
         await Geolocator.requestPermission().then((value) async {
@@ -138,7 +243,11 @@ class _MyMapState extends State<MyMap> {
               lat = 16.753188;
               lng = 101.203616;
               startMapLatLng = LatLng(16.753188, 101.203616);
-              myReadAPI();
+              if (checkSQLite2()) {
+                myReadAPI();
+              } else {
+                readSQLiteData();
+              }
             });
           } else {
             // find Lat, lng
@@ -147,7 +256,11 @@ class _MyMapState extends State<MyMap> {
               lat = position.latitude;
               lng = position.longitude;
               startMapLatLng = LatLng(lat, lng);
-              myReadAPI();
+              if (checkSQLite2()) {
+                myReadAPI();
+              } else {
+                readSQLiteData();
+              }
             });
           }
         });
@@ -158,7 +271,11 @@ class _MyMapState extends State<MyMap> {
           lat = position.latitude;
           lng = position.longitude;
           startMapLatLng = LatLng(lat, lng);
-          myReadAPI();
+          if (checkSQLite2()) {
+            myReadAPI();
+          } else {
+            readSQLiteData();
+          }
         });
       }
     } else {
@@ -167,7 +284,11 @@ class _MyMapState extends State<MyMap> {
         lat = 16.753188;
         lng = 101.203616;
         startMapLatLng = LatLng(16.753188, 101.203616);
-        myReadAPI();
+        if (checkSQLite2()) {
+          myReadAPI();
+        } else {
+          readSQLiteData();
+        }
       });
     }
   }
@@ -189,18 +310,70 @@ class _MyMapState extends State<MyMap> {
     );
   }
 
+  Future<Null> editAndRefresh() async {
+    for (var item in insxModel2s) {
+      
+      if (item.invoice_status == MyConstant.valueInvoiceStatus) {
+        print('id edit == ${item.id}');
+        editDataInsx2(item);
+      }
+    }
+    myReadAPI();
+  }
+
+  Future<Null> editDataInsx2(InsxModel2 insxModel2) async {
+    String url =
+        'https://pea23.com/apipsinsx/editDataWhereInvoiceNo.php?isAdd=true&invoice_no=${insxModel2.invoice_no}';
+
+    await Dio().get(url).then((value) {
+      if (value.toString() == 'true') {
+        // myReadAPI();
+      } else {
+        normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
+      }
+    });
+  }
+
+    Widget pinGreen() {
+    return GestureDetector(
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.pin_drop,
+                size: 30,
+                color: Colors.green,
+              ),
+              Text(
+                '${insxModel2s.length}',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              )
+            ],
+          ),
+          color: Colors.red[100]),
+    );
+  }
+
   Widget buildGoogleMap() {
     return Scaffold(
       body: Stack(
         children: [
           insxModel2s.length == 0 ? buildSecondMap() : buildMainMap(),
+          Positioned(
+            top: 8,
+            left: 10,
+            child: pinGreen(),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          myReadAPI();
+          editAndRefresh();
         },
-        child: Icon(Icons.refresh_rounded),
+        child: Icon(Icons.refresh),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: new BottomAppBar(
@@ -210,7 +383,7 @@ class _MyMapState extends State<MyMap> {
     );
   }
 
-   Widget workDay() {
+  Widget workDay() {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -227,9 +400,7 @@ class _MyMapState extends State<MyMap> {
                 color: Colors.red,
               ),
               Text(
-                insxModel2s.length == 0
-                    ? '?'
-                    : '${insxModel2s.length}',
+                insxModel2s.length == 0 ? '?' : '${insxModel2s.length}',
                 style: TextStyle(fontSize: 10, color: Colors.grey[900]),
               )
             ],
@@ -255,7 +426,7 @@ class _MyMapState extends State<MyMap> {
     return GoogleMap(
       initialCameraPosition: CameraPosition(
         target: startMapLatLng,
-        zoom: 8,
+        zoom: 16,
       ),
       onMapCreated: (controller) {},
       markers: myAllMarker(),

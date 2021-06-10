@@ -1,10 +1,7 @@
 import 'dart:convert';
 
-
-
-
-class InsxModel2 {
-  final String id;
+class InsxSQLiteModel {
+  final int id;
   final String ca;
   final String pea_no;
   final String cus_name;
@@ -27,8 +24,7 @@ class InsxModel2 {
   final String workImage;
   final String worker_code;
   final String worker_name;
-  
-  InsxModel2({
+  InsxSQLiteModel({
     this.id,
     this.ca,
     this.pea_no,
@@ -54,8 +50,8 @@ class InsxModel2 {
     this.worker_name,
   });
 
-  InsxModel2 copyWith({
-    String id,
+  InsxSQLiteModel copyWith({
+    int id,
     String ca,
     String pea_no,
     String cus_name,
@@ -79,7 +75,7 @@ class InsxModel2 {
     String worker_code,
     String worker_name,
   }) {
-    return InsxModel2(
+    return InsxSQLiteModel(
       id: id ?? this.id,
       ca: ca ?? this.ca,
       pea_no: pea_no ?? this.pea_no,
@@ -128,16 +124,14 @@ class InsxModel2 {
       'noti_date': noti_date,
       'update_date': update_date,
       'timestamp': timestamp,
-      'work_image': workImage,
+      'workImage': workImage,
       'worker_code': worker_code,
       'worker_name': worker_name,
     };
   }
 
-  factory InsxModel2.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-  
-    return InsxModel2(
+  factory InsxSQLiteModel.fromMap(Map<String, dynamic> map) {
+    return InsxSQLiteModel(
       id: map['id'],
       ca: map['ca'],
       pea_no: map['pea_no'],
@@ -158,7 +152,7 @@ class InsxModel2 {
       noti_date: map['noti_date'],
       update_date: map['update_date'],
       timestamp: map['timestamp'],
-      workImage: map['work_image'],
+      workImage: map['workImage'],
       worker_code: map['worker_code'],
       worker_name: map['worker_name'],
     );
@@ -166,67 +160,68 @@ class InsxModel2 {
 
   String toJson() => json.encode(toMap());
 
-  factory InsxModel2.fromJson(String source) => InsxModel2.fromMap(json.decode(source));
+  factory InsxSQLiteModel.fromJson(String source) =>
+      InsxSQLiteModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'InsxModel2(id: $id, ca: $ca, pea_no: $pea_no, cus_name: $cus_name, cus_id: $cus_id, invoice_no: $invoice_no, bill_date: $bill_date, bp_no: $bp_no, write_id: $write_id, portion: $portion, ptc_no: $ptc_no, address: $address, new_period_date: $new_period_date, write_date: $write_date, lat: $lat, lng: $lng, invoice_status: $invoice_status, noti_date: $noti_date, update_date: $update_date, timestamp: $timestamp, work_image: $workImage, worker_code: $worker_code, worker_name: $worker_name)';
+    return 'InsxSQLiteModel(id: $id, ca: $ca, pea_no: $pea_no, cus_name: $cus_name, cus_id: $cus_id, invoice_no: $invoice_no, bill_date: $bill_date, bp_no: $bp_no, write_id: $write_id, portion: $portion, ptc_no: $ptc_no, address: $address, new_period_date: $new_period_date, write_date: $write_date, lat: $lat, lng: $lng, invoice_status: $invoice_status, noti_date: $noti_date, update_date: $update_date, timestamp: $timestamp, workImage: $workImage, worker_code: $worker_code, worker_name: $worker_name)';
   }
 
   @override
-  bool operator ==(Object o) {
-    if (identical(this, o)) return true;
-  
-    return o is InsxModel2 &&
-      o.id == id &&
-      o.ca == ca &&
-      o.pea_no == pea_no &&
-      o.cus_name == cus_name &&
-      o.cus_id == cus_id &&
-      o.invoice_no == invoice_no &&
-      o.bill_date == bill_date &&
-      o.bp_no == bp_no &&
-      o.write_id == write_id &&
-      o.portion == portion &&
-      o.ptc_no == ptc_no &&
-      o.address == address &&
-      o.new_period_date == new_period_date &&
-      o.write_date == write_date &&
-      o.lat == lat &&
-      o.lng == lng &&
-      o.invoice_status == invoice_status &&
-      o.noti_date == noti_date &&
-      o.update_date == update_date &&
-      o.timestamp == timestamp &&
-      o.workImage == workImage &&
-      o.worker_code == worker_code &&
-      o.worker_name == worker_name;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is InsxSQLiteModel &&
+        other.id == id &&
+        other.ca == ca &&
+        other.pea_no == pea_no &&
+        other.cus_name == cus_name &&
+        other.cus_id == cus_id &&
+        other.invoice_no == invoice_no &&
+        other.bill_date == bill_date &&
+        other.bp_no == bp_no &&
+        other.write_id == write_id &&
+        other.portion == portion &&
+        other.ptc_no == ptc_no &&
+        other.address == address &&
+        other.new_period_date == new_period_date &&
+        other.write_date == write_date &&
+        other.lat == lat &&
+        other.lng == lng &&
+        other.invoice_status == invoice_status &&
+        other.noti_date == noti_date &&
+        other.update_date == update_date &&
+        other.timestamp == timestamp &&
+        other.workImage == workImage &&
+        other.worker_code == worker_code &&
+        other.worker_name == worker_name;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      ca.hashCode ^
-      pea_no.hashCode ^
-      cus_name.hashCode ^
-      cus_id.hashCode ^
-      invoice_no.hashCode ^
-      bill_date.hashCode ^
-      bp_no.hashCode ^
-      write_id.hashCode ^
-      portion.hashCode ^
-      ptc_no.hashCode ^
-      address.hashCode ^
-      new_period_date.hashCode ^
-      write_date.hashCode ^
-      lat.hashCode ^
-      lng.hashCode ^
-      invoice_status.hashCode ^
-      noti_date.hashCode ^
-      update_date.hashCode ^
-      timestamp.hashCode ^
-      workImage.hashCode ^
-      worker_code.hashCode ^
-      worker_name.hashCode;
+        ca.hashCode ^
+        pea_no.hashCode ^
+        cus_name.hashCode ^
+        cus_id.hashCode ^
+        invoice_no.hashCode ^
+        bill_date.hashCode ^
+        bp_no.hashCode ^
+        write_id.hashCode ^
+        portion.hashCode ^
+        ptc_no.hashCode ^
+        address.hashCode ^
+        new_period_date.hashCode ^
+        write_date.hashCode ^
+        lat.hashCode ^
+        lng.hashCode ^
+        invoice_status.hashCode ^
+        noti_date.hashCode ^
+        update_date.hashCode ^
+        timestamp.hashCode ^
+        workImage.hashCode ^
+        worker_code.hashCode ^
+        worker_name.hashCode;
   }
 }

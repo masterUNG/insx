@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:psinsx/models/insx_model2.dart';
@@ -10,6 +11,7 @@ import 'package:psinsx/pages/home_page.dart';
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:flutter/services.dart';
+import 'package:psinsx/utility/sqlite_helper.dart';
 
 class InsxEdit extends StatefulWidget {
   final InsxModel2 insxModel2;
@@ -32,14 +34,32 @@ class _InsxEditState extends State<InsxEdit> {
   void initState() {
     insxModel2 = widget.insxModel2;
     fromMap = widget.fromMap;
+    findLatLng();
 
-    location.onLocationChanged.listen((event) {
-      setState(() {
-        lat = event.latitude;
-        lng = event.longitude;
-        //print('lat=== $lat, lng == $lng');
-      });
+    // location.onLocationChanged.listen((event) {
+    //   setState(() {
+    //     lat = event.latitude;
+    //     lng = event.longitude;
+    //     //print('lat=== $lat, lng == $lng');
+    //   });
+    // });
+  }
+
+  Future<Null> findLatLng() async {
+    Position position = await findPosition();
+    setState(() {
+      lat = position.latitude;
+      lng = position.longitude;
     });
+  }
+
+  Future<Position> findPosition() async {
+    Position position;
+    try {
+      return await Geolocator.getCurrentPosition();
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -66,22 +86,7 @@ class _InsxEditState extends State<InsxEdit> {
             SizedBox(height: 30),
             groupImage(),
             SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'หมายเหตุ : กรณีที่พิกัดมิเตอร์อยู่ห่างจากพิกัด กฟภ. เกิน 300 เมตร ให้กดปุ่ม ถ่ายภาพหน้ามิเตอร์ไว้เป็นหลักฐาน',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          
           ],
         ),
       ),
@@ -101,21 +106,16 @@ class _InsxEditState extends State<InsxEdit> {
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(top: 14),
-              child: Row(
-                children: [
-                  Text(
-                    '${insxModel2.lat}, ${insxModel2.lng}',
-                    style: TextStyle(fontSize: 12, color: Colors.red),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  IconButton(icon: Icon(Icons.map), onPressed: () {})
-                ],
-              ),
+          Container(
+            margin: EdgeInsets.only(top: 14),
+            child: Row(
+              children: [
+                Text(
+                  '${insxModel2.lat}, ${insxModel2.lng}',
+                  style: TextStyle(fontSize: 12, color: Colors.red),
+                ),
+                IconButton(icon: Icon(Icons.map), onPressed: () {})
+              ],
             ),
           ),
         ],
@@ -367,30 +367,12 @@ class _InsxEditState extends State<InsxEdit> {
   }
 
   Future<Null> editDataInsx(InsxModel2 insxModel2) async {
-    String url =
-        '${MyConstant().domain}/apipsinsx/editDataWhereId.php?isAdd=true&id=${insxModel2.id}&invoice_status=ดำเนินการเสร็จสมบูรณ์&work_image=$urlImage';
+    print('####>>>>>> ${insxModel2.id}');
 
-    await Dio().get(url).then((value) {
-      if (value.toString() == 'true') {
-        MaterialPageRoute materialPageRoute = MaterialPageRoute(
-          builder: (context) => HomePage(),
-        );
-
-        print('fromMap === $fromMap');
-
-        if (fromMap != null) {
-          print('if check Null workd');
-          if (fromMap) {
-            print('fromMap ===>>> $fromMap');
-            Navigator.pop(context);
-          }
-        } else {
-          Navigator.of(context)
-              .pushAndRemoveUntil(materialPageRoute, (route) => false);
-        }
-      } else {
-        normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
-      }
-    });
+    await SQLiteHelper()
+        .editValueWhereId(int.parse(insxModel2.id))
+        .then((value) => Navigator.pop(context));
   }
+
+
 }

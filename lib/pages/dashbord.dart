@@ -31,26 +31,26 @@ class _DashbordState extends State<Dashbord> {
       body: Stack(
         children: [
           MyMap(),
-          Positioned(
-            top: 8,
-            left: 10,
-            child: pinGreen(),
-          ),
-          Positioned(
-            top: 75,
-            left: 10,
-            child: pinYellow(),
-          ),
-           Positioned(
-            top: 142,
-            left: 10,
-            child: pinBlue(),
-          ),
-          Positioned(
-            top: 205,
-            left: 10,
-            child: pinRed(),
-          ),
+          // Positioned(
+          //   top: 8,
+          //   left: 10,
+          //   child: pinGreen(),
+          // ),
+          // Positioned(
+          //   top: 75,
+          //   left: 10,
+          //   child: pinYellow(),
+          // ),
+          //  Positioned(
+          //   top: 142,
+          //   left: 10,
+          //   child: pinBlue(),
+          // ),
+          // Positioned(
+          //   top: 205,
+          //   left: 10,
+          //   child: pinRed(),
+          // ),
         
         ],
       ),
