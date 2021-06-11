@@ -8,8 +8,6 @@ import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
-
-
 class SignIn extends StatefulWidget {
   @override
   _SignInState createState() => _SignInState();
@@ -18,32 +16,37 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   //Field
   String user, password;
-  
 
   @override
   Widget build(BuildContext context) {
     //SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
       //resizeToAvoidBottomPadding: false,
-      
+
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                //SizedBox(height: 30),
-                _showLogo(),
-                _showNameApp(),
-                SizedBox(height: 20),
-                _userForm(),
-                SizedBox(height: 20),
-                _passwordForm(),
-                SizedBox(height: 20),
-                _loginButton(),
-                 SizedBox(height: 300),
-              ],
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(
+            FocusNode(),
+          ),
+          behavior: HitTestBehavior.opaque,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //SizedBox(height: 30),
+                  _showLogo(),
+                  _showNameApp(),
+                  SizedBox(height: 20),
+                  _userForm(),
+                  SizedBox(height: 20),
+                  _passwordForm(),
+                  SizedBox(height: 20),
+                  _loginButton(),
+                  SizedBox(height: 300),
+                ],
+              ),
             ),
           ),
         ),
@@ -56,12 +59,11 @@ class _SignInState extends State<SignIn> {
         child: MaterialButton(
           color: Colors.red[900],
           onPressed: () {
-            
             if (user == null ||
                 user.isEmpty ||
                 password == null ||
                 password.isEmpty) {
-                  normalDialog(context, 'กรุณากรอก User & Password');
+              normalDialog(context, 'กรุณากรอก User & Password');
             } else {
               checkAuthen();
             }
@@ -76,7 +78,6 @@ class _SignInState extends State<SignIn> {
       );
 
   Future<Null> checkAuthen() async {
-
     String url =
         'https://pea23.com/apipsinsx/getUserWhereUserSinghto.php?isAdd=true&username=$user';
     try {
@@ -105,7 +106,6 @@ class _SignInState extends State<SignIn> {
     preferences.setString('user_email', userModel.userEmail);
     preferences.setString('user_img', userModel.userImg);
 
-    
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => myWidget,
     );
@@ -163,7 +163,9 @@ class _SignInState extends State<SignIn> {
 
   Container _showLogo() {
     return Container(
-      child: Image.asset('assets/images/logo.png',height: 100,)
-    );
+        child: Image.asset(
+      'assets/images/logo.png',
+      height: 100,
+    ));
   }
 }

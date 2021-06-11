@@ -9,6 +9,7 @@ final Map<String, WidgetBuilder> map = {
   '/homePage': (BuildContext context) => HomePage(),
   '/signIn': (BuildContext context) => SignIn(),
   '/insxPage': (BuildContext context) => InsxPage(),
+
 };
 
 String initialRount;

@@ -87,7 +87,7 @@ class _ReportPageState extends State<ReportPage> {
         : Container(
             child: Center(
               child: Text(
-                'ไม่พบข้อมูล',
+                'ไม่มีข้อมูลอัพโหลดเสร็จ',
                 style: TextTheme().bodyText1,
               ),
             ),
@@ -123,9 +123,15 @@ class _ReportPageState extends State<ReportPage> {
           children: [
             Card(
               child: ListTile(
-                title: Text(insxModel2s.length == 0
-                    ? 'เสร็จสมบูรณ์ : ? รายการ'
-                    : 'เสร็จสมบูรณ์ : ${insxModel2s.length} รายการ'),
+                title: Text(
+                  insxModel2s.length == 0
+                      ? 'อัพโหลดสมบูรณ์ : ? รายการ'
+                      : 'อัพโหลดสมบูรณ์ : ${insxModel2s.length} รายการ',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             ListView.builder(
@@ -145,33 +151,22 @@ class _ReportPageState extends State<ReportPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListTile(
-                      // leading: Icon(
-                      //   Icons.pin_drop,
-                      //   size: 36,
-                      //   color: colorIcons[index],
-                      // ),
-                      leading: Image.network(
-                        insxModel2s[index].workImage == null
-                            ? Icon(
-                                Icons.pin_drop,
-                                size: 36,
-                                color: colorIcons[index],
-                              )
-                            : insxModel2s[index].workImage,
-                        fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
+                      leading: Icon(
+                        Icons.pin_drop,
+                        size: 24,
+                        color: colorIcons[index],
                       ),
+                   
                       title: Text(
                         insxModel2s[index].cus_name,
                         style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                       
                         ),
                       ),
                       subtitle: Text(
-                        '${insxModel2s[index].write_id} \n${insxModel2s[index].pea_no} ',
-                        style: TextStyle(fontSize: 12),
+                        ' สาย : ${insxModel2s[index].write_id} \n PAE : ${insxModel2s[index].pea_no} ',
+                        style: TextStyle(fontSize: 10),
                       ),
                     ),
                   ),

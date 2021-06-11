@@ -31,16 +31,13 @@ class _InsxShowDataSuccessState extends State<InsxShowDataSuccess> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100.0),
-          child: AppBar(
-            toolbarHeight: 100,
-            title: Text('บันทึกข้อมูล'),
-          ),
-        ),
+      appBar: AppBar(
+        title: Text('อัพโหลดสมบูรณ์'),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 30),
             nameCus(),
             ca(),
             peaNo(),
@@ -48,7 +45,7 @@ class _InsxShowDataSuccessState extends State<InsxShowDataSuccess> {
             address(),
             showLocation(),
             SizedBox(height: 30),
-            groupImage(),
+            //groupImage(),
           ],
         ),
       ),
@@ -73,7 +70,9 @@ class _InsxShowDataSuccessState extends State<InsxShowDataSuccess> {
               margin: EdgeInsets.only(top: 14),
               child: Text(
                 '${insxModel2.worker_name}',
-                style: TextStyle(fontSize: 14,),
+                style: TextStyle(
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
@@ -88,8 +87,8 @@ class _InsxShowDataSuccessState extends State<InsxShowDataSuccess> {
             child: Container(
               margin: EdgeInsets.only(top: 14),
               child: Text(
-                'ชื่อ-สกุล:',
-                style: TextStyle(fontSize: 14),
+                'ชื่อผู้ใช้ไฟ :',
+                style: TextStyle(fontSize: 12),
               ),
             ),
           ),
@@ -124,7 +123,6 @@ class _InsxShowDataSuccessState extends State<InsxShowDataSuccess> {
               style: TextStyle(fontSize: 14),
             ),
           ),
-          IconButton(icon: Icon(Icons.copy), onPressed: (){})
         ],
       );
 
@@ -195,11 +193,4 @@ class _InsxShowDataSuccessState extends State<InsxShowDataSuccess> {
           ),
         ],
       );
-
-  Widget groupImage() => Container(
-    
-    child: Image.network(insxModel2.workImage, fit: BoxFit.cover,),width: 220, height: 220,
-       
-  );
-
 }

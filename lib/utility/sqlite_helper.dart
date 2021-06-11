@@ -91,6 +91,8 @@ class SQLiteHelper {
     map['invoice_status'] = MyConstant.valueInvoiceStatus;
     try {
       await database.update(tableDataBase, map, where: '$columnid = $id');
+
+      print('eeee edit ที่ id $id');
     } catch (e) {
     }
   }

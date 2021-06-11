@@ -6,7 +6,6 @@ import 'package:psinsx/pages/add_information_user.dart';
 
 import 'package:psinsx/pages/help_page.dart';
 import 'package:psinsx/pages/information_user.dart';
-import 'package:psinsx/pages/insx_page.dart';
 import 'package:psinsx/pages/map.dart';
 import 'package:psinsx/pages/report_page.dart';
 import 'package:psinsx/pages/search_page.dart';
@@ -31,50 +30,25 @@ class _HomePageState extends State<HomePage> {
   Widget currentWidget = MyMap();
   int selectedIndex = 0;
 
-  List pages = [MyMap(), InsxPage(), SearchPage(), ReportPage()];
+  List pages = [MyMap(), ReportPage(), SearchPage()];
 
   UserModel userModel;
 
   @override
   void initState() {
     super.initState();
-    // status = widget.statusINSx;
-    // if (status != null) {
-    //   if (status) {
-    //     currentWidget = InsxPage();
-    //   }
-    // }
-
-    //findUser();
     readUserInfo();
   }
 
   Future<Null> readUserInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    //String userId = preferences.getString('id');
 
-    nameUser = preferences.getString('staffname');
-    userEmail = preferences.getString('user_email');
-    userImge = preferences.getString('user_img');
-    userId = preferences.getString('id');
-
-    // String url =
-    //     '${MyConstant().domain}/apipsinsx/getUserWhereId.php?isAdd=true&user_id=$userId';
-    // await Dio().get(url).then((value) {
-    //   var result = json.decode(value.data);
-    //   print('result === $result');
-
-    //   for (var map in result) {
-    //     setState(() {
-    //       userModel = UserModel.fromJson(map);
-
-    //       nameUser = userModel.staffname;
-    //       userEmail = userModel.userEmail;
-    //       userImge = userModel.userImg;
-    //       userId = userModel.userId;
-    //     });
-    //   }
-    // });
+    setState(() {
+      nameUser = preferences.getString('staffname');
+      userEmail = preferences.getString('user_email');
+      userImge = preferences.getString('user_img');
+      userId = preferences.getString('id');
+    });
   }
 
   Widget showDrawerHeader() {
@@ -142,8 +116,8 @@ class _HomePageState extends State<HomePage> {
                       builder: (context) => InformationUser()));
                 }),
             ListTile(
-                leading: Icon(Icons.whatshot_rounded),
-                title: Text('Web'),
+                leading: Icon(Icons.download_rounded),
+                title: Text('ดึงข้อมูล'),
                 subtitle: Text(
                   'เปิดเว็ปไซต์บริษัท,แหล่งข้อมูล',
                   style: TextStyle(fontSize: 8),
@@ -178,29 +152,24 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.0),
-        child: AppBar(
-          toolbarHeight: 100,
-          title: Center(
-            child: Text(
-              'บริษัท สดุดียี่สิบสาม จำกัด',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2,
-              ),
+      appBar: AppBar(
+        title: Center(
+          child: Text(
+            'สวัสดี $nameUser',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.notifications,
-                  color: Colors.red[100],
-                ),
-                onPressed: () {})
-          ],
         ),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.notifications,
+                color: Colors.red[100],
+              ),
+              onPressed: () {})
+        ],
       ),
       body: pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -219,17 +188,21 @@ class _HomePageState extends State<HomePage> {
               label: 'แผนที่',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.pin_drop),
-              label: 'เช็คสีหมุด',
+              icon: Icon(Icons.check_box_rounded),
+              label: 'อัพโหลดแล้ว',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search),
-              label: 'ประวัติ',
+              label: 'ประวัติ&พิกัด',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_rounded),
-              label: 'ผลงาน',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: IconButton(
+            //       icon: Icon(Icons.download_rounded),
+            //       onPressed: () {
+            //         launchURL();
+            //       }),
+            //   label: 'ดึงข้อมูล',
+            // ),
           ]),
     );
   }

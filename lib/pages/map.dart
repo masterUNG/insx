@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:psinsx/models/insx_model2.dart';
 import 'package:psinsx/models/insx_sqlite_model.dart';
 import 'package:psinsx/pages/insx_edit.dart';
 import 'package:psinsx/pages/insx_page.dart';
+import 'package:psinsx/utility/custom_dialog.dart';
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/my_style.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
@@ -33,7 +35,6 @@ class _MyMapState extends State<MyMap> {
   }
 
   bool checkSQLite2() {
-
     print('########### statusSQLite ######### $statusSQLite');
     return statusSQLite;
   }
@@ -53,51 +54,61 @@ class _MyMapState extends State<MyMap> {
   }
 
   Future<Null> readSQLiteData() async {
-    print('>>>>>>>>>>>>>>>>>>33333reade word');
+    print('>>>>>>>>>>>>>>>>> reade word');
     insxModel2s.clear();
+    insxModelForEdits.clear();
 
     await SQLiteHelper().readSQLite().then((value) {
-      setState(() {
-        List<InsxSQLiteModel> insxSQLiteModels = value;
-        for (var model2 in insxSQLiteModels) {
-          InsxModel2 insxModel2 = InsxModel2(
-            id: model2.id.toString(),
-            ca: model2.ca,
-            pea_no: model2.pea_no,
-            cus_name: model2.cus_name,
-            cus_id: model2.cus_id,
-            invoice_no: model2.invoice_no,
-            bill_date: model2.bill_date,
-            bp_no: model2.bp_no,
-            write_id: model2.write_id,
-            portion: model2.portion,
-            ptc_no: model2.ptc_no,
-            address: model2.address,
-            new_period_date: model2.new_period_date,
-            write_date: model2.write_date,
-            lat: model2.lat,
-            lng: model2.lng,
-            invoice_status: model2.invoice_status,
-            noti_date: model2.noti_date,
-            update_date: model2.update_date,
-            timestamp: model2.timestamp,
-            workImage: model2.workImage,
-            worker_code: model2.worker_code,
-            worker_name: model2.worker_name,
-          );
+      List<InsxSQLiteModel> insxSQLiteModels = value;
 
+      for (var model2 in insxSQLiteModels) {
+        InsxModel2 insxModel2 = InsxModel2(
+          id: model2.id.toString(),
+          ca: model2.ca,
+          pea_no: model2.pea_no,
+          cus_name: model2.cus_name,
+          cus_id: model2.cus_id,
+          invoice_no: model2.invoice_no,
+          bill_date: model2.bill_date,
+          bp_no: model2.bp_no,
+          write_id: model2.write_id,
+          portion: model2.portion,
+          ptc_no: model2.ptc_no,
+          address: model2.address,
+          new_period_date: model2.new_period_date,
+          write_date: model2.write_date,
+          lat: model2.lat,
+          lng: model2.lng,
+          invoice_status: model2.invoice_status,
+          noti_date: model2.noti_date,
+          update_date: model2.update_date,
+          timestamp: model2.timestamp,
+          workImage: model2.workImage,
+          worker_code: model2.worker_code,
+          worker_name: model2.worker_name,
+        );
+
+        if (insxModel2.invoice_status != MyConstant.valueInvoiceStatus) {
           setState(() {
-           insxModel2s.add(insxModel2);
+            insxModel2s.add(insxModel2);
+            myAllMarker();
           });
+        } else {
+          insxModelForEdits.add(insxModel2);
         }
-      });
+      }
     });
   }
 
+  List<InsxModel2> insxModelForEdits = [];
+
   Future<Null> myReadAPI() async {
-    print('>>>>>>>>>>>>>>>>>>My Read API Workd');
+    print('>>>>>>>>>>>>>>>>>>My Read API Workd ${insxModel2s.length}');
+    print('>>>>>>>>>>>>>>>>>>My Read API Workd ${insxModelForEdits.length}');
 
     insxModel2s.clear();
+    insxModelForEdits.clear();
+
     await SQLiteHelper().deleteAllData();
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -179,12 +190,14 @@ class _MyMapState extends State<MyMap> {
             );
             Navigator.push(context, route).then(
               (value) {
-                //print('Back Form insx');
-                if (checkSQLite2()) {
-                  myReadAPI();
-                } else {
-                  readSQLiteData();
-                }
+                print('====== Back Form insx');
+                readSQLiteData();
+
+                // if (checkSQLite2()) {
+                //   myReadAPI();
+                // } else {
+                //   readSQLiteData();
+                // }
               },
             );
           },
@@ -311,31 +324,38 @@ class _MyMapState extends State<MyMap> {
   }
 
   Future<Null> editAndRefresh() async {
-    for (var item in insxModel2s) {
-      
-      if (item.invoice_status == MyConstant.valueInvoiceStatus) {
-        print('id edit == ${item.id}');
-        editDataInsx2(item);
+    if (insxModelForEdits.length != 0) {
+      for (var item in insxModelForEdits) {
+        CustomDialog().loadingDialog(context);
+        editDataInsx2(item).then((value) {
+          Navigator.pop(context);
+        });
       }
+    } else {
+      Fluttertoast.showToast(msg: 'ไม่ข้อมูลอัพโหลด');
     }
-    myReadAPI();
   }
 
   Future<Null> editDataInsx2(InsxModel2 insxModel2) async {
     String url =
         'https://pea23.com/apipsinsx/editDataWhereInvoiceNo.php?isAdd=true&invoice_no=${insxModel2.invoice_no}';
 
+    print('==== url edit>>>> $url');
+
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {
-        // myReadAPI();
+        myReadAPI();
+        Fluttertoast.showToast(msg: 'อัพโหลดข้อมูลสำเร็จ');
       } else {
-        normalDialog(context, 'ผิดพลาด กรุณาลองใหม่');
+        Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด กรุณาลองใหม่');
       }
     });
   }
 
-    Widget pinGreen() {
+  Widget pinGreen() {
     return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, '/insxPage')
+          .then((value) => readSQLiteData()),
       child: Container(
           padding: const EdgeInsets.all(8),
           child: Column(
@@ -343,13 +363,13 @@ class _MyMapState extends State<MyMap> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.pin_drop,
+                Icons.list_alt_rounded,
                 size: 30,
-                color: Colors.green,
+                //color: Colors.green,
               ),
               Text(
                 '${insxModel2s.length}',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: Colors.red[900]),
               )
             ],
           ),
@@ -369,11 +389,50 @@ class _MyMapState extends State<MyMap> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          editAndRefresh();
-        },
-        child: Icon(Icons.refresh),
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          insxModelForEdits.length != 0
+              ? Text('')
+              : FloatingActionButton(
+                  onPressed: () {
+                    CustomDialog().loadingDialog(context);
+                    myReadAPI().then((value) => Navigator.pop(context));
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.refresh),
+                        Text(
+                  'เคลีย์',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+                    ],
+                  ),
+                ),
+          SizedBox(
+            width: 20,
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              editAndRefresh();
+            },
+            child: Column(
+              children: [
+                Icon(Icons.cloud_upload),
+                Text(
+                  '${insxModelForEdits.length}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: new BottomAppBar(
@@ -426,7 +485,7 @@ class _MyMapState extends State<MyMap> {
     return GoogleMap(
       initialCameraPosition: CameraPosition(
         target: startMapLatLng,
-        zoom: 16,
+        zoom: 8,
       ),
       onMapCreated: (controller) {},
       markers: myAllMarker(),

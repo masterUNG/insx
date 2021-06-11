@@ -8,21 +8,22 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:psinsx/models/insx_model2.dart';
+import 'package:psinsx/models/insx_sqlite_model.dart';
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:flutter/services.dart';
 import 'package:psinsx/utility/sqlite_helper.dart';
 
-class InsxEdit extends StatefulWidget {
-  final InsxModel2 insxModel2;
+class InsxEdit2 extends StatefulWidget {
+  final InsxSQLiteModel insxModel2;
   final bool fromMap;
-  InsxEdit({Key key, this.insxModel2, this.fromMap}) : super(key: key);
+  InsxEdit2({Key key, this.insxModel2, this.fromMap}) : super(key: key);
 
   @override
-  _InsxEditState createState() => _InsxEditState();
+  _InsxEdit2State createState() => _InsxEdit2State();
 }
 
-class _InsxEditState extends State<InsxEdit> {
-  InsxModel2 insxModel2;
+class _InsxEdit2State extends State<InsxEdit2> {
+  InsxSQLiteModel insxModel2;
   File file;
   String urlImage;
   Location location = Location();
@@ -34,6 +35,14 @@ class _InsxEditState extends State<InsxEdit> {
     insxModel2 = widget.insxModel2;
     fromMap = widget.fromMap;
     findLatLng();
+
+    // location.onLocationChanged.listen((event) {
+    //   setState(() {
+    //     lat = event.latitude;
+    //     lng = event.longitude;
+    //     //print('lat=== $lat, lng == $lng');
+    //   });
+    // });
   }
 
   Future<Null> findLatLng() async {
@@ -72,7 +81,8 @@ class _InsxEditState extends State<InsxEdit> {
             showLocation(),
             SizedBox(height: 80),
             groupImage(),
-         
+ 
+          
           ],
         ),
       ),
@@ -143,17 +153,18 @@ class _InsxEditState extends State<InsxEdit> {
             margin: EdgeInsets.all(8),
             child: Text(
               '${insxModel2.ca}',
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(fontSize: 12),
             ),
           ),
-          IconButton(
-            icon: Icon(Icons.copy_outlined),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: "${insxModel2.ca}"));
-              Fluttertoast.showToast(msg: 'คัดลอก ${insxModel2.ca}');
-              print(insxModel2.ca);
-            },
-          ),
+           IconButton(
+                  icon: Icon(Icons.copy_outlined),
+                  onPressed: () {
+                    Clipboard.setData(
+                        ClipboardData(text: "${insxModel2.ca}"));
+                    print(insxModel2.pea_no);
+                    Fluttertoast.showToast(msg: 'คัดลอก ${insxModel2.ca}');
+                  },
+                ),
         ],
       );
 
@@ -182,8 +193,8 @@ class _InsxEditState extends State<InsxEdit> {
                   onPressed: () {
                     Clipboard.setData(
                         ClipboardData(text: "Gis ${insxModel2.pea_no}"));
-                        Fluttertoast.showToast(msg: 'คัดลอก Gis ${insxModel2.pea_no}');
                     print(insxModel2.pea_no);
+                    Fluttertoast.showToast(msg: 'คัดลอก Gis ${insxModel2.pea_no}');
                   },
                 ),
               ],
@@ -272,6 +283,7 @@ class _InsxEditState extends State<InsxEdit> {
         children: [
           Column(
             children: [
+          
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -337,12 +349,14 @@ class _InsxEditState extends State<InsxEdit> {
     } catch (e) {}
   }
 
-  Future<Null> editDataInsx(InsxModel2 insxModel2) async {
+  Future<Null> editDataInsx(InsxSQLiteModel insxModel2) async {
     print('####>>>>>> ${insxModel2.id}');
-    Fluttertoast.showToast(msg: 'บันทึกแล้ว');
+       Fluttertoast.showToast(msg: 'บันทึกแล้ว');
 
     await SQLiteHelper()
-        .editValueWhereId(int.parse(insxModel2.id))
+        .editValueWhereId(insxModel2.id)
         .then((value) => Navigator.pop(context));
   }
+
+
 }

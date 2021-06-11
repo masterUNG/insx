@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
@@ -9,12 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:psinsx/models/insx_model.dart';
 import 'package:psinsx/models/insx_model2.dart';
-import 'package:psinsx/pages/insx_edit.dart';
+import 'package:psinsx/models/insx_sqlite_model.dart';
+import 'package:psinsx/pages/insx_edit2.dart';
 
 import 'package:psinsx/utility/my_constant.dart';
 import 'package:psinsx/utility/my_style.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:psinsx/utility/sqlite_helper.dart';
 
 class InsxPage extends StatefulWidget {
   InsxPage({Key key}) : super(key: key);
@@ -27,8 +27,8 @@ class _InsxPageState extends State<InsxPage> {
   bool loadStatus = true; //โหลด
   bool status = true; //มีข้อมูล
   List<InsxModel> insxModels = List();
-  List<InsxModel2> insxModel2s = [];
-  List<InsxModel2> filterInsxModel2s = [];
+  List<InsxSQLiteModel> insxModel2s = [];
+  List<InsxSQLiteModel> filterInsxModel2s = [];
   List<Color> colorIcons = List();
   List<File> files = List();
   String urlImage, search;
@@ -53,26 +53,25 @@ class _InsxPageState extends State<InsxPage> {
     if (insxModel2s.length != 0) {
       setToOrigin();
     }
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String workername = preferences.getString('staffname');
 
-    String url =
-        'https://pea23.com/apipsinsx/getInsxWhereUser.php?isAdd=true&worker_name=$workername';
-    await Dio().get(url).then((value) {
+    await SQLiteHelper().readSQLite().then((value) {
       setState(() {
         loadStatus = false;
       });
 
-      if (value.toString() != 'null') {
-        var result = json.decode(value.data);
-        for (var map in result) {
-          InsxModel2 insxModel2 = InsxModel2.fromMap(map);
-          setState(() {
-            insxModel2s.add(insxModel2);
-            colorIcons.add(calculageHues(insxModel2.noti_date));
-            files.add(null);
-            filterInsxModel2s = insxModel2s;
-          });
+      if (value.length != 0) {
+        var result = value;
+
+        for (var model in result) {
+          if (model.invoice_status != MyConstant.valueInvoiceStatus) {
+            InsxSQLiteModel insxModel2 = model;
+            setState(() {
+              insxModel2s.add(insxModel2);
+              colorIcons.add(calculageHues(insxModel2.noti_date));
+              files.add(null);
+              filterInsxModel2s = insxModel2s;
+            });
+          }
         }
       } else {
         setState(() {
@@ -85,6 +84,9 @@ class _InsxPageState extends State<InsxPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: insxModel2s.length == 0 ? Text('ไม่พบข้อมูล'): Text('ข้อมูล ${insxModel2s.length} รายการ'),
+      ),
       body:
           loadStatus ? Center(child: MyStyle().showProgress()) : showContent(),
     );
@@ -187,11 +189,13 @@ class _InsxPageState extends State<InsxPage> {
               itemBuilder: (context, int index) => GestureDetector(
                 onTap: () {
                   MaterialPageRoute route = MaterialPageRoute(
-                    builder: (context) => InsxEdit(
+                    builder: (context) => InsxEdit2(
                       insxModel2: filterInsxModel2s[index],
                     ),
                   );
-                  Navigator.push(context, route);
+                  Navigator.push(context, route).then(
+                    (value) => readInsx(),
+                  );
                 },
 
                 //=> confirmDialog(insxModel2s[index], colorIcons[index], index),
@@ -201,18 +205,18 @@ class _InsxPageState extends State<InsxPage> {
                     child: ListTile(
                       leading: Icon(
                         Icons.pin_drop,
-                        size: 36,
+                        size: 26,
                         color: colorIcons[index],
                       ),
                       title: Text(
                         filterInsxModel2s[index].cus_name,
                         style: TextStyle(
                           fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          //fontWeight: FontWeight.bold,
                         ),
                       ),
                       subtitle: Text(
-                        'สาย : ${filterInsxModel2s[index].write_id} \nPEA : ${filterInsxModel2s[index].pea_no} ',
+                        'วันแจ้งดำเนินการ: ${filterInsxModel2s[index].noti_date} \nสาย : ${filterInsxModel2s[index].write_id}',
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
@@ -233,7 +237,7 @@ class _InsxPageState extends State<InsxPage> {
           Container(
             width: 250,
             child: TextField(
-              decoration: InputDecoration(hintText: 'กรอกชื่อ'),
+              decoration: InputDecoration(hintText: 'กรอกชื่อที่ค้นหา'),
               onChanged: (value) {
                 debouncer.run(() {
                   setState(() {
@@ -289,7 +293,7 @@ class _InsxPageState extends State<InsxPage> {
         urlImage = '${MyConstant().domain}/apipsinsx/upload/$fileName';
         print('=== usrlImage == $urlImage');
 
-        editDataInsx(insxModel2s[index]);
+        //editDataInsx(insxModel2s[index]);
       });
     } catch (e) {}
   }
