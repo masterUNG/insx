@@ -6,7 +6,7 @@ import 'package:psinsx/models/user_model.dart';
 import 'package:psinsx/pages/home_page.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -44,7 +44,7 @@ class _SignInState extends State<SignIn> {
                   _passwordForm(),
                   SizedBox(height: 20),
                   _loginButton(),
-                  SizedBox(height: 300),
+                  SizedBox(height: 30),
                 ],
               ),
             ),
@@ -57,7 +57,10 @@ class _SignInState extends State<SignIn> {
   Widget _loginButton() => Container(
         width: 250,
         child: MaterialButton(
-          color: Colors.red[900],
+          padding: EdgeInsets.all(20),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+          color: Color(0xff6a1b9a),
           onPressed: () {
             if (user == null ||
                 user.isEmpty ||
@@ -68,11 +71,18 @@ class _SignInState extends State<SignIn> {
               checkAuthen();
             }
           },
-          child: Text(
-            'Login',
-            style: TextStyle(
-              color: Colors.white,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock_open_sharp),
+              SizedBox(width: 20),
+              Text(
+                'เข้าสู่ระบบ',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -80,20 +90,35 @@ class _SignInState extends State<SignIn> {
   Future<Null> checkAuthen() async {
     String url =
         'https://pea23.com/apipsinsx/getUserWhereUserSinghto.php?isAdd=true&username=$user';
+    ProgressDialog pr = ProgressDialog(context, isDismissible: false);
+    pr.style(
+        message: 'Loading...',
+        progressWidget: Container(
+          margin: EdgeInsets.all(10),
+          child: CircularProgressIndicator(),
+        ));
+
     try {
+      await pr.show();
+
       Response response = await Dio().get(url);
-      print('res ===== $response');
+      //print('res ===== $response');
 
       var result = json.decode(response.data);
+      print('result ===== $result');
 
-      //print('result $result');
-
-      for (var map in result) {
-        UserModel userModel = UserModel.fromJson(map);
-        if (password == userModel.password) {
-          routeTuService(HomePage(), userModel);
-        } else {
-          normalDialog(context, 'Password ผิดครับ');
+      await pr.hide();
+      if (result == null) {
+        normalDialog(context, 'user หรือ passwor ผิดครับ');
+      } else {
+        for (var map in result) {
+          UserModel userModel = UserModel.fromJson(map);
+          if (password == userModel.password) {
+            routeTuService(HomePage(), userModel);
+          } else {
+            pr.hide();
+            normalDialog(context, 'Password ผิดครับ');
+          }
         }
       }
     } catch (e) {}
@@ -113,25 +138,24 @@ class _SignInState extends State<SignIn> {
   }
 
   Widget _userForm() => Container(
+        color: Color(0xffe1bee7),
         width: 250,
         child: TextFormField(
           onChanged: (value) => user = value.trim(),
           decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.account_box,
-              color: Colors.red,
+              color: Color(0xff9c4dcc),
             ),
-            labelStyle: TextStyle(),
-            labelText: 'User',
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey[900])),
-            focusedBorder:
-                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+            hintText: 'ระบุชื่อผู้ใช้ User',
+            hintStyle: TextStyle(color: Color(0xff9c4dcc), fontSize: 12),
+      
           ),
         ),
       );
 
   Widget _passwordForm() => Container(
+        color: Color(0xffe1bee7),
         width: 250,
         child: TextFormField(
           onChanged: (value) => password = value.trim(),
@@ -139,14 +163,11 @@ class _SignInState extends State<SignIn> {
           decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.lock,
-              color: Colors.red,
+              color: Color(0xff9c4dcc),
             ),
-            labelStyle: TextStyle(),
-            labelText: 'Password',
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey[900])),
-            focusedBorder:
-                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+            hintStyle: TextStyle(color: Color(0xff9c4dcc), fontSize: 12),
+            hintText: 'ระบุรหัสผ่าน Password',
+          
           ),
         ),
       );
@@ -156,7 +177,7 @@ class _SignInState extends State<SignIn> {
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.red[900],
+          //color: Colors.red[900],
           letterSpacing: 3,
         ),
       );
@@ -165,7 +186,7 @@ class _SignInState extends State<SignIn> {
     return Container(
         child: Image.asset(
       'assets/images/logo.png',
-      height: 100,
+      height: 80,
     ));
   }
 }

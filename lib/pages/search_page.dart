@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:psinsx/models/data_location_model.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,25 +32,35 @@ class _SearchPageState extends State<SearchPage> {
     String url =
         'https://pea23.com/apipsinsx/getAllDataLocationWhereCa.php?isAdd=true&ca=$search';
 
-    var response = await Dio().get(url);
+    ProgressDialog pr = ProgressDialog(context, isDismissible: false);
+    pr.style(
+        message: 'Loading...',
+        progressWidget: Container(
+          margin: EdgeInsets.all(10),
+          child: CircularProgressIndicator(),
+        ));
 
-    print('response ===>>> $response');
+    try {
+      await pr.show();
 
-    if (response.toString() == 'null') {
-      setState(() {
-        nodata = 'ไม่พบข้อมูฃ CA: $search';
-      });
-    } else {
-      var result = json.decode(response.data);
-      print('result ====>>> $result');
-      for (var map in result) {
-        DataLocationModel dataLocationModel = DataLocationModel.fromJson(map);
-        print('name ====>>> ${dataLocationModel.ca}');
+      var response = await Dio().get(url);
+
+      await pr.hide();
+      if (response.toString() == 'null') {
         setState(() {
-          dataLocationModels.add(dataLocationModel);
+          pr.hide();
+          nodata = 'ไม่พบ CA: $search';
         });
+      } else {
+        var result = json.decode(response.data);
+        for (var map in result) {
+          DataLocationModel dataLocationModel = DataLocationModel.fromJson(map);
+          setState(() {
+            dataLocationModels.add(dataLocationModel);
+          });
+        }
       }
-    }
+    } catch (e) {}
   }
 
   Future<Null> launchURL() async {
@@ -89,6 +100,7 @@ class _SearchPageState extends State<SearchPage> {
           Container(
             width: 250,
             child: TextField(
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(hintText: 'กรอก ca'),
               onChanged: (value) => search = value.trim(),
             ),
@@ -117,8 +129,6 @@ class _SearchPageState extends State<SearchPage> {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () async {
-                print('${dataLocationModels[index].ptcInsx}');
-
                 String url = dataLocationModels[index].ptcInsx;
                 if (await canLaunch(url)) {
                   await launch(url);
@@ -128,12 +138,19 @@ class _SearchPageState extends State<SearchPage> {
               },
               child: Card(
                 child: ListTile(
+                  trailing: IconButton(
+                    icon: Icon(Icons.phone),
+                    onPressed: () async => {
+                      await launch('tel:${dataLocationModels[index].cusTel}'),
+                      print('${dataLocationModels[index].cusTel}')
+                    },
+                  ),
                   leading: Icon(Icons.location_on_outlined),
                   title: Text(dataLocationModels[index].ca),
                   subtitle: Text(
-                    dataLocationModels[index].cusName,
+                    '${dataLocationModels[index].cusName} \n ${dataLocationModels[index].imgDate}',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                 ),

@@ -104,10 +104,10 @@ class _HomePageState extends State<HomePage> {
             showDrawerHeader(),
             ListTile(
                 leading: Icon(Icons.person_pin),
-                title: Text('Information'),
+                title: Text('ข้อมูลส่วนตัว'),
                 subtitle: Text(
-                  'ข้อมูลส่วนตัว',
-                  style: TextStyle(fontSize: 8),
+                  'ข้อมูลส่วนตัวของพนักงาน',
+                  style: TextStyle(fontSize: 10),
                 ),
                 trailing: Icon(Icons.arrow_right),
                 onTap: () {
@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                 title: Text('ดึงข้อมูล'),
                 subtitle: Text(
                   'เปิดเว็ปไซต์บริษัท,แหล่งข้อมูล',
-                  style: TextStyle(fontSize: 8),
+                  style: TextStyle(fontSize: 10),
                 ),
                 trailing: Icon(Icons.arrow_right),
                 onTap: () {
@@ -129,10 +129,10 @@ class _HomePageState extends State<HomePage> {
                 }),
             ListTile(
                 leading: Icon(Icons.help),
-                title: Text('Help'),
+                title: Text('ช่วยเหลือ'),
                 subtitle: Text(
-                  'ช่วยเหลือ',
-                  style: TextStyle(fontSize: 8),
+                  'ช่วยเหลือ คู่มือต่าง',
+                  style: TextStyle(fontSize: 10),
                 ),
                 trailing: Icon(Icons.arrow_right),
                 onTap: () {
@@ -142,10 +142,10 @@ class _HomePageState extends State<HomePage> {
                 }),
             ListTile(
               leading: Icon(Icons.logout),
-              title: Text('SignOut'),
+              title: Text('ออกจากระบบ'),
               subtitle: Text(
                 'ออกจากระบบ',
-                style: TextStyle(fontSize: 8),
+                style: TextStyle(fontSize: 10),
               ),
               onTap: () => signOutProcess(),
             ),
@@ -173,8 +173,10 @@ class _HomePageState extends State<HomePage> {
       ),
       body: pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Colors.red,
-          unselectedItemColor: Colors.red[200],
+        backgroundColor: Color(0xff6a1b9a),
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Color(0xffce93d8),
+          
           showUnselectedLabels: true,
           currentIndex: selectedIndex,
           onTap: (int index) {

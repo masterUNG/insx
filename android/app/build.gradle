@@ -32,7 +32,7 @@ def keystoreProperties = new Properties()
    }
 
    android {
-    compileSdkVersion 30
+    compileSdkVersion 29
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -43,8 +43,8 @@ def keystoreProperties = new Properties()
         applicationId "pea23.com.psinsx"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 11
-        versionName "1.0.11"       
+        versionCode 14
+        versionName "1.0.14"       
     }
 
        signingConfigs {

@@ -25,7 +25,6 @@ class _InformationUserState extends State<InformationUser> {
     super.initState();
     readUserInfo();
   }
-  
 
   Future<Null> readUserInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -34,7 +33,6 @@ class _InformationUserState extends State<InformationUser> {
         '${MyConstant().domain}/apipsinsx/getUserWhereId.php?isAdd=true&user_id=$userId';
     await Dio().get(url).then((value) {
       var result = json.decode(value.data);
-      print('result === $result');
 
       for (var map in result) {
         userModel = UserModel.fromJson(map);
@@ -42,7 +40,6 @@ class _InformationUserState extends State<InformationUser> {
         setState(() {
           if (userModel.userAdress.isEmpty) {}
         });
-        print('userAdress ${userModel.userAdress}');
       }
     });
   }
@@ -51,7 +48,15 @@ class _InformationUserState extends State<InformationUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ข้อมูลพนักงาน'),
+        title: Center(
+          child: Text(
+            'บริษัท สดุดียี่สิบสาม จำกัด',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
       body: Container(
         child: Stack(
@@ -75,7 +80,7 @@ class _InformationUserState extends State<InformationUser> {
               clipper: MyCustomClipper(),
               child: Container(
                 height: 50,
-                color: Colors.red,
+                color: Colors.yellow[800],
               ),
             ),
             align(),
@@ -100,7 +105,7 @@ class _InformationUserState extends State<InformationUser> {
           children: [
             Icon(
               Icons.person,
-              color: Colors.red[200],
+              color: Colors.yellow[800],
             ),
             SizedBox(
               width: 20,
@@ -110,16 +115,16 @@ class _InformationUserState extends State<InformationUser> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Text(
+                    'รหัสพนังาน : PS${userModel.userId}',
+                    style: TextStyle(fontSize: 12),
+                  ),
                   userModel.userAdress.isEmpty
                       ? Text('User')
                       : Text(
-                          'Username : ${userModel.username}',
+                          'User : ${userModel.username}',
                           style: TextStyle(fontSize: 12),
                         ),
-                  Text(
-                    'Password : ${userModel.password}',
-                    style: TextStyle(fontSize: 12),
-                  ),
                 ],
               ),
             )
@@ -137,7 +142,7 @@ class _InformationUserState extends State<InformationUser> {
           children: [
             Icon(
               Icons.monetization_on_outlined,
-              color: Colors.red[200],
+              color: Colors.yellow[800],
             ),
             SizedBox(
               width: 20,
@@ -174,7 +179,7 @@ class _InformationUserState extends State<InformationUser> {
           children: [
             Icon(
               Icons.mobile_friendly_rounded,
-              color: Colors.red[200],
+              color: Colors.yellow[800],
             ),
             SizedBox(
               width: 20,
@@ -209,7 +214,7 @@ class _InformationUserState extends State<InformationUser> {
           children: [
             Icon(
               Icons.home_filled,
-              color: Colors.red[200],
+              color: Colors.yellow[800],
             ),
             SizedBox(
               width: 20,

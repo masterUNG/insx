@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:psinsx/utility/my_style.dart';
 import 'package:psinsx/utility/normal_dialog.dart';
 import 'package:psinsx/utility/sqlite_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class MyMap extends StatefulWidget {
   @override
@@ -54,8 +56,10 @@ class _MyMapState extends State<MyMap> {
   }
 
   Future<Null> readSQLiteData() async {
-    print('>>>>>>>>>>>>>>>>> reade word');
+    print('>>>>>>>>>>>>>>>>> reade word ${insxModel2s.length}');
+
     insxModel2s.clear();
+
     insxModelForEdits.clear();
 
     await SQLiteHelper().readSQLite().then((value) {
@@ -326,10 +330,19 @@ class _MyMapState extends State<MyMap> {
   Future<Null> editAndRefresh() async {
     if (insxModelForEdits.length != 0) {
       for (var item in insxModelForEdits) {
-        CustomDialog().loadingDialog(context);
+        ProgressDialog pr = ProgressDialog(context, isDismissible: false);
+        pr.style(
+            message: 'Loading...',
+            progressWidget: Container(
+              margin: EdgeInsets.all(10),
+              child: CircularProgressIndicator(),
+            ));
+            pr.show();
+
         editDataInsx2(item).then((value) {
           Navigator.pop(context);
         });
+        pr.hide();
       }
     } else {
       Fluttertoast.showToast(msg: 'ไม่ข้อมูลอัพโหลด');
@@ -342,10 +355,16 @@ class _MyMapState extends State<MyMap> {
 
     print('==== url edit>>>> $url');
 
+    //Fluttertoast.showToast(msg: 'อัพโหลด ${insxModelForEdits.length} รายการ');
+
+
+
     await Dio().get(url).then((value) {
+
       if (value.toString() == 'true') {
-        myReadAPI();
-        Fluttertoast.showToast(msg: 'อัพโหลดข้อมูลสำเร็จ');
+        readSQLiteData();
+        //myReadAPI();
+        //Fluttertoast.showToast(msg: 'กำลังอัพโหลด...');
       } else {
         Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด กรุณาลองใหม่');
       }
@@ -365,11 +384,14 @@ class _MyMapState extends State<MyMap> {
               Icon(
                 Icons.list_alt_rounded,
                 size: 30,
-                //color: Colors.green,
+                color: Colors.grey[800],
               ),
               Text(
                 '${insxModel2s.length}',
-                style: TextStyle(fontSize: 12, color: Colors.red[900]),
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red[900],
+                    fontWeight: FontWeight.bold),
               )
             ],
           ),
@@ -402,13 +424,13 @@ class _MyMapState extends State<MyMap> {
                   child: Column(
                     children: [
                       Icon(Icons.refresh),
-                        Text(
-                  'เคลีย์',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
+                      Text(
+                        'รีเฟรช',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
                     ],
                   ),
                 ),
